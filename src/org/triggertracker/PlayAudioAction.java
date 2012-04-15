@@ -22,28 +22,31 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
-public class PlayVideoAction implements Action {
+public class PlayAudioAction implements Action {
 
-	// The parent application for this video playback action.
+	// The audio to play back when the action is triggered.
+	private String audioToTrigger;
+
+	// The parent application for this audio playback action.
 	private Application parentApplication;
 
-	// The parent context for this video playback action.
+	// The parent context for this audio playback action.
 	private Context parentContext;
 
-	// The video to play back when the action is triggered.
-	private String videoToTrigger;
-
-	public PlayVideoAction(Application app, Context context, String videoName) {
+	/**
+	 * @param audioFile The audio file that you want this action to play
+	 */
+	public PlayAudioAction(Application app, Context context, String audioFile) {
 		parentApplication = app;
 		parentContext = context;
-		videoToTrigger = videoName;
+		audioToTrigger = audioFile;
 	}
 
 	@Override
 	public void trigger() {
-		System.err.println("Triggering PlayVideo - " + videoToTrigger);
-		Intent dialogIntent = new Intent(parentContext, PlayVideoActivity.class);
-		dialogIntent.putExtra("videoTrigger", videoToTrigger);
+		System.err.println("Triggering PlayAudio - " + audioToTrigger);
+		Intent dialogIntent = new Intent(parentContext, PlayAudioActivity.class);
+		dialogIntent.putExtra("audioTrigger", audioToTrigger);
 		dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		parentApplication.startActivity(dialogIntent);
 	}

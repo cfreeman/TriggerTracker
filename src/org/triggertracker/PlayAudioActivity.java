@@ -18,33 +18,41 @@
  */
 package org.triggertracker;
 
-import android.app.Application;
-import android.content.Context;
-import android.content.Intent;
+import java.io.File;
+import java.io.IOException;
 
-public class PlayVideoAction implements Action {
+import android.app.Activity;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.os.Bundle;
+import android.os.Environment;
 
-	// The parent application for this video playback action.
-	private Application parentApplication;
-
-	// The parent context for this video playback action.
-	private Context parentContext;
-
-	// The video to play back when the action is triggered.
-	private String videoToTrigger;
-
-	public PlayVideoAction(Application app, Context context, String videoName) {
-		parentApplication = app;
-		parentContext = context;
-		videoToTrigger = videoName;
-	}
-
+public class PlayAudioActivity extends Activity {		
 	@Override
-	public void trigger() {
-		System.err.println("Triggering PlayVideo - " + videoToTrigger);
-		Intent dialogIntent = new Intent(parentContext, PlayVideoActivity.class);
-		dialogIntent.putExtra("videoTrigger", videoToTrigger);
-		dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		parentApplication.startActivity(dialogIntent);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        MediaPlayer mp = new MediaPlayer();
+		try {
+			File f = Environment.getExternalStorageDirectory();
+			mp.setDataSource(f + "/" + getIntent().getStringExtra("audioTrigger"));
+			mp.prepare();
+			mp.start();
+			
+            // Close this activity when the audio finishes playing back.
+            mp.setOnCompletionListener(new OnCompletionListener() {
+				@Override
+				public void onCompletion(MediaPlayer player) {
+					finish();
+				}
+            });
+			
+		} catch (IllegalArgumentException e) {
+			System.err.println("Unable to play audio");
+		} catch (IllegalStateException e) {
+			System.err.println("Unable to play audio");
+		} catch (IOException e) {
+			System.err.println("Unable to play audio");
+		}
 	}
 }

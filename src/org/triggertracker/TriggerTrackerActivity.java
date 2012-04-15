@@ -18,19 +18,11 @@
  */
 package org.triggertracker;
 
-import java.io.File;
-
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Intent;
-import android.graphics.PixelFormat;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.widget.VideoView;
 
 public class TriggerTrackerActivity extends Activity {
 	/**
@@ -57,30 +49,7 @@ public class TriggerTrackerActivity extends Activity {
         	startService(i);
         }
 
-        // Determine if a videoTrigger has started this activity - Play the video if it has, otherwise
-        // just show a boring screen.
-        System.err.println("video extra" + getIntent().getStringExtra("videoTrigger"));
-        if (getIntent().getStringExtra("videoTrigger") != null) {
-        	File f = Environment.getExternalStorageDirectory();
-            getWindow().setFormat(PixelFormat.TRANSLUCENT);
-            VideoView videoHolder = new VideoView(this);
-            setContentView(videoHolder);
-            videoHolder.setVideoURI(Uri.parse(f + "/" + getIntent().getStringExtra("videoTrigger")));
-            // Get focus before playing the video.
-            videoHolder.requestFocus();
-            videoHolder.start();
-
-            // Close this activity when the video finishes playing back.
-            videoHolder.setOnCompletionListener(new OnCompletionListener() {
-				@Override
-				public void onCompletion(MediaPlayer player) {
-					finish();
-				}
-            });
-
-        } else {
-        	setContentView(R.layout.main);
-        }
+    	setContentView(R.layout.main);
     }
 
     @Override

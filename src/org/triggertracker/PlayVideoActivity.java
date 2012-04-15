@@ -18,33 +18,37 @@
  */
 package org.triggertracker;
 
-import android.app.Application;
-import android.content.Context;
-import android.content.Intent;
+import java.io.File;
 
-public class PlayVideoAction implements Action {
+import android.app.Activity;
+import android.graphics.PixelFormat;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.widget.VideoView;
 
-	// The parent application for this video playback action.
-	private Application parentApplication;
-
-	// The parent context for this video playback action.
-	private Context parentContext;
-
-	// The video to play back when the action is triggered.
-	private String videoToTrigger;
-
-	public PlayVideoAction(Application app, Context context, String videoName) {
-		parentApplication = app;
-		parentContext = context;
-		videoToTrigger = videoName;
-	}
-
+public class PlayVideoActivity extends Activity {		
 	@Override
-	public void trigger() {
-		System.err.println("Triggering PlayVideo - " + videoToTrigger);
-		Intent dialogIntent = new Intent(parentContext, PlayVideoActivity.class);
-		dialogIntent.putExtra("videoTrigger", videoToTrigger);
-		dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		parentApplication.startActivity(dialogIntent);
+    public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		File f = Environment.getExternalStorageDirectory();
+        getWindow().setFormat(PixelFormat.TRANSLUCENT);
+        VideoView videoHolder = new VideoView(this);
+        setContentView(videoHolder);
+        videoHolder.setVideoURI(Uri.parse(f + "/" + getIntent().getStringExtra("videoTrigger")));
+        // Get focus before playing the video.
+        videoHolder.requestFocus();
+        videoHolder.start();
+
+        // Close this activity when the video finishes playing back.
+        videoHolder.setOnCompletionListener(new OnCompletionListener() {
+			@Override
+			public void onCompletion(MediaPlayer player) {
+				finish();
+			}
+        });
 	}
 }
