@@ -57,6 +57,10 @@ public class TriggerService extends Service implements LocationListener {
 			Trigger createGPSTrigger(float lat, float lon, Action actionToFire) {
 				return new GPSTrigger(lm, lat, lon, actionToFire);
 			}
+
+			Trigger createTimeTrigger(int minutes, Action actionToFire) {
+				return new TimeTrigger(minutes, actionToFire);
+			}
 			
 			/**
 			 * Helper method for creating video playback actions.
@@ -85,11 +89,15 @@ public class TriggerService extends Service implements LocationListener {
 				Looper.prepare();
 
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
-//				triggers.add(createGPSTrigger(-27.511816f, 153.035267f,
-//											  createVideoAction("movieA.mp4")));
 
-				triggers.add(createGPSTrigger(-27.511816f, 153.035267f,
-					      					  createCallAction("station1", "450722920")));
+				triggers.add(createGPSTrigger(-27.472221f, 153.019116f,
+					      					  createCallAction("stationX", "450722920")));
+
+				triggers.add(createGPSTrigger(-27.472562f, 153.0192800f,
+											  createVideoAction("cut-ya.mp4")));
+
+				triggers.add(createTimeTrigger(48, createVideoAction("cut-ya.mp4")));
+
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             	PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TeethTracker");

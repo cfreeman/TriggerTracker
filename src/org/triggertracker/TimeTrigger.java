@@ -18,17 +18,9 @@
  */
 package org.triggertracker;
 
-import android.location.Location;
-import android.location.LocationManager;
+import java.util.Calendar;
 
-public class GPSTrigger implements Trigger {
-
-	// The RADIUS to use around the specified coordinate, whenever we are near the location
-	// this trigger will trip.
-	private static final float RADIUS = 11.0f; 
-
-	// The location manager that we fetch GPS coordinates from.
-	private LocationManager lm;
+public class TimeTrigger implements Trigger {
 
 	// Has this trigger gone off?
 	private boolean hasTriggered;
@@ -36,18 +28,21 @@ public class GPSTrigger implements Trigger {
 	// The action to fire if the trigger has been tripped.
 	private Action action;
 
-	// The latitude that we want to use when triggering the above action.
-	private float lat;
+	// This trigger trips when the time is the same or greater than the
+	// following number of minutes past the hour.
+	int minutes;
 
-	// The longitude that we want to use when triggering the above action.
-	private float lon;
-
-	public GPSTrigger(LocationManager locationManager, float latToTrigger, float lonToTrigger, Action actionToTrigger) {
-		lm = locationManager;
-		hasTriggered = false;
+	/**
+	 * Constructor.
+	 *
+	 * @param minutesPastHour The number of minutes past the hour to trigger the action.
+	 * @param actionToTrigger The action to trigger, when the time is the specified number
+	 * of minutes past the hour.
+	 */
+	public TimeTrigger(int minutesPastHour, Action actionToTrigger) {
+		minutes = minutesPastHour;
 		action = actionToTrigger;
-		lat = latToTrigger;
-		lon = lonToTrigger;
+		hasTriggered = false;
 	}
 
 	@Override
@@ -57,26 +52,12 @@ public class GPSTrigger implements Trigger {
 
 	@Override
 	public void testFire() {
-		// We only trigger once.
 		if (!hasTriggered) {
-			Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER); 
-			float[] distance = new float[1];
-
-			if (loc != null) {
-				Location.distanceBetween(loc.getLatitude(),
-										 loc.getLongitude(),
-										 lat,
-										 lon,
-										 distance);
-
-				System.err.println("Testing Loc - [" + loc.getLatitude() + ", " + loc.getLongitude() + "] - " + distance[0]);
-
-				if (distance[0] < RADIUS) {
-					System.err.println("GPS Trigger Fired [" + lat + ", " + lon + "]");
-					action.trigger();
-					hasTriggered = true;
-				}
-			}
+			Calendar cal = Calendar.getInstance();
+			if (cal.get(Calendar.MINUTE) >= minutes) {
+				action.trigger();
+				hasTriggered = true;
+			}			
 		}
 	}
 
