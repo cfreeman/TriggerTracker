@@ -18,33 +18,42 @@
  */
 package org.triggertracker;
 
-import java.util.Calendar;
+import java.util.ArrayList;
 
-public class TimeTrigger implements Trigger {
+public class ChainTrigger implements Trigger {
+
+	// The chain of triggers to fire one at a time.
+	private ArrayList<Trigger> chainOfTriggers;
+
+	// The index of the current trigger in the chain.
+	private int currentTrigger;
 
 	// Has this trigger gone off?
 	private boolean hasTriggered;
 
 	// The action to fire if the trigger has been tripped.
-	private Action action;
+	private Action action;	
 
-	// This trigger trips when the time is the same or greater than the
-	// following number of minutes past the hour.
-	private int minutes;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param minutesPastHour The number of minutes past the hour to trigger the action.
-	 * @param actionToTrigger The action to trigger, when the time is the specified number
-	 * of minutes past the hour.
+	/** 
+	 * @param actionToTrigger The action to trigger once everything in the chain has triggered.
 	 */
-	public TimeTrigger(int minutesPastHour, Action actionToTrigger) {
-		minutes = minutesPastHour;
+	public ChainTrigger(Action actionToTrigger) {
 		action = actionToTrigger;
+		chainOfTriggers = new ArrayList<Trigger>();
 		hasTriggered = false;
+		currentTrigger = 0;
 	}
 
+	/**
+	 * Adds a trigger to the end of the chain. All other triggers in the chain
+	 * must be fired before this trigger will fire.
+	 *
+	 * @param trigger The trigger to test at the end of the chain.
+	 */
+	public void addTrigger(Trigger trigger) {
+		chainOfTriggers.add(trigger);
+	}
+	
 	@Override
 	public void setAction(Action actionToTrigger) {
 		action = actionToTrigger;
@@ -53,11 +62,19 @@ public class TimeTrigger implements Trigger {
 	@Override
 	public void testFire() {
 		if (!hasTriggered) {
-			Calendar cal = Calendar.getInstance();
-			if (cal.get(Calendar.MINUTE) >= minutes) {
+			Trigger activeTrigger = chainOfTriggers.get(currentTrigger);
+			activeTrigger.testFire();
+
+			// Move onto the next trigger in the chain if the 
+			if (activeTrigger.hasTriggered()) {
+				currentTrigger++;
+			}
+
+			// If we are the end of the chain - all done.
+			if (currentTrigger == chainOfTriggers.size()) {
 				action.trigger();
 				hasTriggered = true;
-			}			
+			}
 		}
 	}
 
