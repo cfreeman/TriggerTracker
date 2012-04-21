@@ -27,6 +27,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -35,10 +36,17 @@ public class TriggerService extends Service implements LocationListener {
 	private static final int POLL_INTERVAL = 5000;
 	private boolean isRunning = true;
 	private LocationManager lm;
-
+	private TrackerConfiguration config;
+		
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		System.err.println("Starting Service");		
+				
+		config = new TrackerConfiguration();
+		config.loadFromYaml("/tracker.yml");
+		
+		System.err.println(config.getPhoneName());
+		System.err.println(config.getPhoneNumber());
 
 		//Enable the GPS - updating every second or if we move more than 5 meters.
 		lm = (LocationManager) getSystemService(LOCATION_SERVICE);
