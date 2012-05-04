@@ -18,7 +18,16 @@
  */
 package org.triggertracker;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.yaml.snakeyaml.Yaml;
 
 import android.app.Service;
 import android.content.Context;
@@ -43,10 +52,10 @@ public class TriggerService extends Service implements LocationListener {
 		System.err.println("Starting Service");		
 				
 		config = new TrackerConfiguration();
-		config.loadFromYaml("/tracker.yml");
+		config.loadFromYaml("/trackerConfig.yml");
 		
-		System.err.println(config.getPhoneName());
-		System.err.println(config.getPhoneNumber());
+		//System.err.println(config.getPhoneName());
+		//System.err.println(config.getPhoneNumber());
 
 		//Enable the GPS - updating every second or if we move more than 5 meters.
 		lm = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -91,13 +100,42 @@ public class TriggerService extends Service implements LocationListener {
 
 			public void run() {            	
 				Looper.prepare();
-
+				
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
-//				triggers.add(createGPSTrigger(-27.511816f, 153.035267f,
-//											  createVideoAction("movieA.mp4")));
+				
+				try {
 
-				triggers.add(createGPSTrigger(-27.511816f, 153.035267f,
-					      					  createCallAction("station1", "450722920")));
+					File configFile = new File(
+							Environment.getExternalStorageDirectory() + "/trackerStations.yml");
+
+					InputStream configInput = new FileInputStream(configFile);
+
+					Yaml yaml = new Yaml();
+					Map<String, Object> stationMap = (Map<String, Object>) yaml.load(configInput);
+					
+					ArrayList<Map<String, Object>> stationList = (ArrayList<Map<String, Object>>) stationMap.get("stations");
+					
+					for(int i = 0; i < stationList.size(); i++){
+						float stationLat = new Float(stationList.get(i).get("lat").toString());
+						float stationLon = new Float(stationList.get(i).get("long").toString());
+						String stationName = stationList.get(i).get("name").toString();
+						
+						triggers.add(createGPSTrigger(stationLat, stationLon, createCallAction(stationName, config.getPhoneNumber())));
+					}
+
+				} catch (FileNotFoundException e) {
+
+					e.printStackTrace();
+
+				}
+
+
+				/*ArrayList<Trigger> triggers = new ArrayList<Trigger>();
+//				triggers.add(createGPSTrigger(-27.511816f, 153.035267f,
+//											  createVideoAction("movieA.mp4")));*/
+
+				/*triggers.add(createGPSTrigger(-27.511816f, 153.035267f,
+				  createCallAction("station1", "450722920")));*/
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             	PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TeethTracker");

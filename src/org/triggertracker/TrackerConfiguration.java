@@ -1,6 +1,5 @@
 package org.triggertracker;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,7 +13,7 @@ public class TrackerConfiguration {
 
 	private String phoneName;
 	private String phoneNumber;
-	private Map<String, Tuple> stationMap;
+	private String gpsRange;
 
 	public TrackerConfiguration() {
 	};
@@ -39,49 +38,40 @@ public class TrackerConfiguration {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-	
-	public Map<String, Tuple> getStationMap() {
-		return stationMap;
+
+	public String getGPSRange() {
+		return gpsRange;
 	}
 
-	public void setStationMap(Map<String, Tuple> stationMap) {
-		this.stationMap = stationMap;
+	public void setGPSRange(String gpsRange) {
+		this.gpsRange = gpsRange;
 	}
 
-	private Object construct(String data) {
+	private Object construct(InputStream data) {
 		Yaml yaml = new Yaml();
 		return yaml.load(data);
 	}
 
 	public void loadFromYaml(String filepath) {
 
-		/*
-		 * try {
-		 * 
-		 * File configFile = new File(Environment.getExternalStorageDirectory()
-		 * + filepath);
-		 * 
-		 * InputStream configInput = new FileInputStream(configFile);
-		 * 
-		 * Yaml yaml = new Yaml();
-		 * 
-		 * yaml.load(configInput);
-		 * 
-		 * } catch (FileNotFoundException e) {
-		 * 
-		 * e.printStackTrace();
-		 * 
-		 * }
-		 */
+		try {
 
-		String data = "--- !org.yaml.snakeyaml.constructor.TrackerConfiguration\nphoneName: Luke\nphoneNumber: 0439727186\n{Station1: [-27.511816, 153.035267]}";
-		Object obj = construct(data);
+			File configFile = new File(
+					Environment.getExternalStorageDirectory() + filepath);
 
-		TrackerConfiguration config = (TrackerConfiguration) obj;
+			InputStream configInput = new FileInputStream(configFile);
 
-		this.setPhoneName(config.getPhoneName());
-		this.setPhoneNumber(config.getPhoneNumber());
-		this.setStationMap(config.getStationMap());
+			Map<String, Object> object = (Map<String, Object>) construct(configInput);
+
+			this.setPhoneName(object.get("phoneName").toString());
+			this.setPhoneName(object.get("phoneNumber").toString());
+			this.setGPSRange(object.get("gpsRange").toString());
+
+		} catch (FileNotFoundException e) {
+
+			e.printStackTrace();
+
+		}
 
 	}
 
