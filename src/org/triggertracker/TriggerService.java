@@ -88,19 +88,42 @@ public class TriggerService extends Service implements LocationListener {
 			Action createCallAction(String callBack, String number) {
 				return new CallBackAction(callBack, number);
 			}
+			
+			// Phone-1 450722920
+			// Phone-2 499574637
+			// Phone-3 499322451
+			// Phone-4 499528247
+			// Phone-5 499570760
+			// Phone-6 499575393
+			// Phone-7 410121107
+			// Phone-8 410126112
+			// Phone-9 410929556
+			// Phone-10 410929481
+			// Phone-11 410929219
+			// Phone-12 410929816
+			// Phone-13 410929401
+
+			static final String NUMBER = "410929816";
 
 			public void run() {            	
 				Looper.prepare();
-
+				
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 
-				triggers.add(createGPSTrigger(-27.472221f, 153.019116f,
-					      					  createCallAction("stationX", "450722920")));
+				triggers.add(createGPSTrigger(-27.472237f, 153.019089f,
+											   createCallAction("station1", NUMBER)));
+				
+				triggers.add(createGPSTrigger(-27.472868f, 153.019455f,
+						   					   createCallAction("station2", NUMBER)));
+				
+				triggers.add(createGPSTrigger(-27.473827f,153.020447f,
+	   					   					   createCallAction("station3", NUMBER)));
+				
+				triggers.add(createGPSTrigger(-27.471861f,153.019196f,
+	   					   					   createCallAction("station4", NUMBER)));
 
-				triggers.add(createGPSTrigger(-27.472562f, 153.0192800f,
-											  createVideoAction("cut-ya.mp4")));
-
-				triggers.add(createTimeTrigger(16, createVideoAction("cut-ya.mp4")));
+				triggers.add(createGPSTrigger(-27.470699f,153.017807f,
+	   					   					  createCallAction("station5", NUMBER)));				
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             	PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TeethTracker");
@@ -110,9 +133,14 @@ public class TriggerService extends Service implements LocationListener {
 	                wl.acquire();
 					
 					// For each registered trigger - see if it fires.
+	                int trig = 0;
 					for (Trigger t : triggers) {
+						System.err.println("T" + trig);
 						t.testFire();
+						trig++;
 					}
+					
+					System.err.println("****");
 
 					try {
 						//Pause so that we have the opportunity to cancel the bonding request.

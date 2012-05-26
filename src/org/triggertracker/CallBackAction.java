@@ -40,7 +40,7 @@ public class CallBackAction implements Action {
 	public void trigger() {
 		try {			
 			System.err.println("Triggering CallBack - " + number + " : " + callBackID);
-			URL centralTracker = new URL("http://teethtracker.heroku.com/device_movements/new?type=arrival&node=" + callBackID + "&number=" + number);
+			URL centralTracker = new URL("http://teethtracker.heroku.com/device_movements/new?type=arrival&node=" + callBackID + "&number=" + number + "&v=2");
 			URLConnection trackerConnection = centralTracker.openConnection();
 			trackerConnection.getContentLength();
 

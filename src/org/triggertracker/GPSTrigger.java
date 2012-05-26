@@ -25,7 +25,7 @@ public class GPSTrigger implements Trigger {
 
 	// The RADIUS to use around the specified coordinate, whenever we are near the location
 	// this trigger will trip.
-	private static final float RADIUS = 11.0f; 
+	private static final float RADIUS = 15.0f; 
 
 	// The location manager that we fetch GPS coordinates from.
 	private LocationManager lm;
