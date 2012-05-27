@@ -56,6 +56,11 @@ public class GPSTrigger implements Trigger {
 	}
 
 	@Override
+	public Action getAction() {
+		return action;
+	}
+
+	@Override
 	public void testFire() {
 		// We only trigger once.
 		if (!hasTriggered) {

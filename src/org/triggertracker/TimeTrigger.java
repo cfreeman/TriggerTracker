@@ -51,6 +51,11 @@ public class TimeTrigger implements Trigger {
 	}
 
 	@Override
+	public Action getAction() {
+		return action;
+	}
+
+	@Override
 	public void testFire() {
 		if (!hasTriggered) {
 			Calendar cal = Calendar.getInstance();

@@ -60,6 +60,11 @@ public class ChainTrigger implements Trigger {
 	}
 
 	@Override
+	public Action getAction() {
+		return action;
+	}
+
+	@Override
 	public void testFire() {
 		if (!hasTriggered) {
 			Trigger activeTrigger = chainOfTriggers.get(currentTrigger);

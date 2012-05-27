@@ -18,7 +18,16 @@
  */
 package org.triggertracker;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.yaml.snakeyaml.Yaml;
 
 import android.app.Service;
 import android.content.Context;
@@ -27,6 +36,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -35,10 +45,17 @@ public class TriggerService extends Service implements LocationListener {
 	private static final int POLL_INTERVAL = 5000;
 	private boolean isRunning = true;
 	private LocationManager lm;
-
+	private TrackerConfiguration config;
+		
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		System.err.println("Starting Service");		
+				
+		config = new TrackerConfiguration();
+		config.loadFromYaml("/trackerConfig.yml");
+		
+		//System.err.println(config.getPhoneName());
+		//System.err.println(config.getPhoneNumber());
 
 		//Enable the GPS - updating every second or if we move more than 5 meters.
 		lm = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -88,42 +105,40 @@ public class TriggerService extends Service implements LocationListener {
 			Action createCallAction(String callBack, String number) {
 				return new CallBackAction(callBack, number);
 			}
-			
-			// Phone-1 450722920
-			// Phone-2 499574637
-			// Phone-3 499322451
-			// Phone-4 499528247
-			// Phone-5 499570760
-			// Phone-6 499575393
-			// Phone-7 410121107
-			// Phone-8 410126112
-			// Phone-9 410929556
-			// Phone-10 410929481
-			// Phone-11 410929219
-			// Phone-12 410929816
-			// Phone-13 410929401
-
-			static final String NUMBER = "410929816";
 
 			public void run() {            	
 				Looper.prepare();
-				
+
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
+				triggers.add(createGPSTrigger(-27.471889f, 153.018906f, createAudioAction("station1.m4a")));
+				triggers.add(createGPSTrigger(-27.472092f, 153.018784f, createAudioAction("station2.m4a")));
+				triggers.add(createGPSTrigger(-27.472717f, 153.019348f, createAudioAction("station3.m4a")));
+				triggers.add(createGPSTrigger(-27.472107f, 153.018661f, createAudioAction("station4.m4a")));
+				triggers.add(createGPSTrigger(-27.471605f, 153.018478f, createAudioAction("station5.m4a")));
+				triggers.add(createGPSTrigger(-27.471710f, 153.018234f, createAudioAction("station6.m4a")));
+				triggers.add(createGPSTrigger(-27.471823f, 153.017929f, createAudioAction("station7.m4a")));
+				triggers.add(createGPSTrigger(-27.470839f, 153.017761f, createAudioAction("station8.m4a")));
+				triggers.add(createGPSTrigger(-27.471399f, 153.018799f, createAudioAction("station9.m4a")));
 
-				triggers.add(createGPSTrigger(-27.472237f, 153.019089f,
-											   createCallAction("station1", NUMBER)));
-				
-				triggers.add(createGPSTrigger(-27.472868f, 153.019455f,
-						   					   createCallAction("station2", NUMBER)));
-				
-				triggers.add(createGPSTrigger(-27.473827f,153.020447f,
-	   					   					   createCallAction("station3", NUMBER)));
-				
-				triggers.add(createGPSTrigger(-27.471861f,153.019196f,
-	   					   					   createCallAction("station4", NUMBER)));
+				try {
+					File configFile = new File(Environment.getExternalStorageDirectory() + "/trackerStations.yml");
+					InputStream configInput = new FileInputStream(configFile);
 
-				triggers.add(createGPSTrigger(-27.470699f,153.017807f,
-	   					   					  createCallAction("station5", NUMBER)));				
+					Yaml yaml = new Yaml();
+					Map<String, Object> stationMap = (Map<String, Object>) yaml.load(configInput);
+
+					ArrayList<Map<String, Object>> stationList = (ArrayList<Map<String, Object>>) stationMap.get("stations");
+
+					for(int i = 0; i < stationList.size(); i++){
+						float stationLat = new Float(stationList.get(i).get("lat").toString());
+						float stationLon = new Float(stationList.get(i).get("long").toString());
+						String stationName = stationList.get(i).get("name").toString();
+
+						triggers.add(createGPSTrigger(stationLat, stationLon, createCallAction(stationName, config.getPhoneNumber())));
+					}
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             	PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TeethTracker");
@@ -139,7 +154,6 @@ public class TriggerService extends Service implements LocationListener {
 						t.testFire();
 						trig++;
 					}
-					
 					System.err.println("****");
 
 					try {
