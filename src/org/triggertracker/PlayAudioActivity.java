@@ -32,27 +32,41 @@ public class PlayAudioActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MediaPlayer mp = new MediaPlayer();
-		try {
-			File f = Environment.getExternalStorageDirectory();
-			mp.setDataSource(f + "/" + getIntent().getStringExtra("audioTrigger"));
-			mp.prepare();
-			mp.start();
-			
-            // Close this activity when the audio finishes playing back.
-            mp.setOnCompletionListener(new OnCompletionListener() {
-				@Override
-				public void onCompletion(MediaPlayer player) {
-					finish();
-				}
-            });
-			
-		} catch (IllegalArgumentException e) {
-			System.err.println("Unable to play audio");
-		} catch (IllegalStateException e) {
-			System.err.println("Unable to play audio");
-		} catch (IOException e) {
-			System.err.println("Unable to play audio");
-		}
+        // Work out if we are already playing this audio or not.
+        boolean isPlaying = false;
+        if (savedInstanceState != null) {
+        	isPlaying = savedInstanceState.getBoolean("playing");
+        }
+
+        if (!isPlaying) {
+	        MediaPlayer mp = new MediaPlayer();
+			try {
+				File f = Environment.getExternalStorageDirectory();
+				mp.setDataSource(f + "/" + getIntent().getStringExtra("audioTrigger"));
+				mp.prepare();
+				mp.start();
+
+	            // Close this activity when the audio finishes playing back.
+	            mp.setOnCompletionListener(new OnCompletionListener() {
+					@Override
+					public void onCompletion(MediaPlayer player) {
+						finish();
+					}
+	            });
+
+			} catch (IllegalArgumentException e) {
+				System.err.println("Unable to play audio");
+			} catch (IllegalStateException e) {
+				System.err.println("Unable to play audio");
+			} catch (IOException e) {
+				System.err.println("Unable to play audio");
+			}
+        }
 	}
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    	outState.putBoolean("playing", true);
+    	super.onSaveInstanceState(outState);
+    }
 }

@@ -50,6 +50,5 @@ public class CallBackAction implements Action {
 			System.err.println("io exception: " + e);
 		}
 		// TODO Auto-generated method stub
-		
 	}
 }

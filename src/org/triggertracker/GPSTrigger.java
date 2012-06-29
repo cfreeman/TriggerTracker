@@ -74,12 +74,12 @@ public class GPSTrigger implements Trigger {
 										 lon,
 										 distance);
 
-				System.err.println("Testing Loc - [" + loc.getLatitude() + ", " + loc.getLongitude() + "] - " + distance[0]);
+				//System.err.println("Testing Loc - [" + loc.getLatitude() + ", " + loc.getLongitude() + "] - " + distance[0]);
 
 				if (distance[0] < RADIUS) {
-					System.err.println("GPS Trigger Fired [" + lat + ", " + lon + "]");
-					action.trigger();
 					hasTriggered = true;
+					//System.err.println("GPS Trigger Tripped [" + lat + ", " + lon + "] - " + distance[0]);
+					action.trigger();
 				}
 			}
 		}

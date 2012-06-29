@@ -60,8 +60,9 @@ public class TimeTrigger implements Trigger {
 		if (!hasTriggered) {
 			Calendar cal = Calendar.getInstance();
 			if (cal.get(Calendar.MINUTE) >= minutes) {
-				action.trigger();
+				System.err.println("Time Trigger Tripped [" + minutes + "]");
 				hasTriggered = true;
+				action.trigger();
 			}			
 		}
 	}

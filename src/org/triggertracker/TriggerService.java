@@ -42,7 +42,7 @@ import android.os.Looper;
 import android.os.PowerManager;
 
 public class TriggerService extends Service implements LocationListener {
-	private static final int POLL_INTERVAL = 5000;
+	private static final int POLL_INTERVAL = 1000;
 	private boolean isRunning = true;
 	private LocationManager lm;
 	private TrackerConfiguration config;
@@ -50,19 +50,16 @@ public class TriggerService extends Service implements LocationListener {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		System.err.println("Starting Service");		
-				
-		config = new TrackerConfiguration();
-		config.loadFromYaml("/trackerConfig.yml");
-		
-		//System.err.println(config.getPhoneName());
-		//System.err.println(config.getPhoneNumber());
 
-		//Enable the GPS - updating every second or if we move more than 5 meters.
+		//config = new TrackerConfiguration();
+		//config.loadFromYaml("/trackerConfig.yml");
+
+		//Enable the GPS - updating every second or if we move more than 1 meter.
 		lm = (LocationManager) getSystemService(LOCATION_SERVICE);
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, POLL_INTERVAL, 1.0f, this);		
 
 		new Thread(new Runnable() {
-			
+
 			/**
 			 * Helper method for creating GPS triggers.
 			 * @param lat The latitude that trips the trigger.
@@ -78,7 +75,11 @@ public class TriggerService extends Service implements LocationListener {
 			Trigger createTimeTrigger(int minutes, Action actionToFire) {
 				return new TimeTrigger(minutes, actionToFire);
 			}
-			
+
+			Trigger createDelayTrigger(long seconds, Action actionToFire) {
+				return new DelayedTrigger(seconds, actionToFire);
+			}
+
 			/**
 			 * Helper method for creating video playback actions.
 			 *
@@ -89,7 +90,7 @@ public class TriggerService extends Service implements LocationListener {
 			Action createVideoAction(String video) {
 				return new PlayVideoAction(getApplication(), getBaseContext(), video);
 			}
-			
+
 			Action createAudioAction(String audio) {
 				return new PlayAudioAction(getApplication(), getBaseContext(), audio);
 			}
@@ -110,51 +111,75 @@ public class TriggerService extends Service implements LocationListener {
 				Looper.prepare();
 
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
-				triggers.add(createGPSTrigger(-27.471889f, 153.018906f, createAudioAction("station1.m4a")));
-				triggers.add(createGPSTrigger(-27.472092f, 153.018784f, createAudioAction("station2.m4a")));
-				triggers.add(createGPSTrigger(-27.472717f, 153.019348f, createAudioAction("station3.m4a")));
-				triggers.add(createGPSTrigger(-27.472107f, 153.018661f, createAudioAction("station4.m4a")));
-				triggers.add(createGPSTrigger(-27.471605f, 153.018478f, createAudioAction("station5.m4a")));
-				triggers.add(createGPSTrigger(-27.471710f, 153.018234f, createAudioAction("station6.m4a")));
-				triggers.add(createGPSTrigger(-27.471823f, 153.017929f, createAudioAction("station7.m4a")));
-				triggers.add(createGPSTrigger(-27.470839f, 153.017761f, createAudioAction("station8.m4a")));
-				triggers.add(createGPSTrigger(-27.471399f, 153.018799f, createAudioAction("station9.m4a")));
 
-				try {
-					File configFile = new File(Environment.getExternalStorageDirectory() + "/trackerStations.yml");
-					InputStream configInput = new FileInputStream(configFile);
+				// Path 1.
+				triggers.add(createDelayTrigger(30, createAudioAction("juliemsg.m4a")));
+				ChainTrigger chain = new ChainTrigger(null);
+				chain.addTrigger(createGPSTrigger(-27.47157563f, 153.018449843f, createVideoAction("lamp.m4v")));
+				chain.addTrigger(createDelayTrigger(151, createAudioAction("Billymsg.m4a")));
+				triggers.add(chain);
 
-					Yaml yaml = new Yaml();
-					Map<String, Object> stationMap = (Map<String, Object>) yaml.load(configInput);
+				ChainTrigger chain2 = new ChainTrigger(null);
+				chain2.addTrigger(createGPSTrigger(-27.47181718f, 153.01791608f, createAudioAction("stairs.m4a")));
+				chain2.addTrigger(createDelayTrigger(180, createAudioAction("msglillyfromstairs.m4a")));
+				triggers.add(chain2);
 
-					ArrayList<Map<String, Object>> stationList = (ArrayList<Map<String, Object>>) stationMap.get("stations");
+				ChainTrigger chain3 = new ChainTrigger(null);
+				chain3.addTrigger(createGPSTrigger(-27.470827201f, 153.017663956f, createVideoAction("grassy.m4v")));
+				chain3.addTrigger(createDelayTrigger(300, createAudioAction("alicefromgrassy.m4a")));
+				triggers.add(chain3);
 
-					for(int i = 0; i < stationList.size(); i++){
-						float stationLat = new Float(stationList.get(i).get("lat").toString());
-						float stationLon = new Float(stationList.get(i).get("long").toString());
-						String stationName = stationList.get(i).get("name").toString();
+				// Path 2.
+				/*
+				ChainTrigger chain = new ChainTrigger(null);
+				chain.addTrigger(createGPSTrigger(-27.47184752f, 153.01894940f, createVideoAction("sculpture.m4v")));
+				chain.addTrigger(createDelayTrigger(300, createAudioAction("juliemsg.m4a")));
+				triggers.add(chain);
 
-						triggers.add(createGPSTrigger(stationLat, stationLon, createCallAction(stationName, config.getPhoneNumber())));
-					}
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
+				ChainTrigger chain2 = new ChainTrigger(null);
+				chain2.addTrigger(createGPSTrigger(-27.47157563f, 153.018449843f, createVideoAction("lamp.m4v")));
+				chain2.addTrigger(createDelayTrigger(180, createAudioAction("Billymsg.m4a")));
+				triggers.add(chain2);
+
+				triggers.add(createGPSTrigger(-27.47181718f, 153.01791608f, createAudioAction("stairs.m4a")));
+
+				ChainTrigger chain3 = new ChainTrigger(null);
+				chain3.addTrigger(createGPSTrigger(-27.470827201f, 153.017663956f, createVideoAction("grassy.m4v")));
+				chain3.addTrigger(createDelayTrigger(300, createAudioAction("alicefromgrassy.m4a")));
+				triggers.add(chain3);
+				*/
+
+				// Path 3.
+				/*
+				ChainTrigger chain = new ChainTrigger(null);
+				chain.addTrigger(createGPSTrigger(-27.47200876f, 153.01884547f, createVideoAction("dropbox.m4v")));
+				chain.addTrigger(createDelayTrigger(300, createAudioAction("juliemsg.m4a")));
+				triggers.add(chain);
+
+				ChainTrigger chain2 = new ChainTrigger(null);
+				chain2.addTrigger(createGPSTrigger(-27.47157563f, 153.018449843f, createVideoAction("lamp.m4v")));
+				chain2.addTrigger(createDelayTrigger(180, createAudioAction("Billymsg.m4a")));
+				triggers.add(chain2);
+
+				triggers.add(createGPSTrigger(-27.47181718f, 153.01791608f, createAudioAction("stairs.m4a")));
+
+				ChainTrigger chain3 = new ChainTrigger(null);
+				chain3.addTrigger(createGPSTrigger(-27.470827201f, 153.017663956f, createVideoAction("grassy.m4v")));
+				chain3.addTrigger(createDelayTrigger(300, createAudioAction("alicefromgrassy.m4a")));
+				triggers.add(chain3);
+				*/
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             	PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TeethTracker");
-				
+
 				while (isRunning) {
 					// Prevent the device from going to sleep.
 	                wl.acquire();
-					
+
 					// For each registered trigger - see if it fires.
-	                int trig = 0;
 					for (Trigger t : triggers) {
-						System.err.println("T" + trig);
 						t.testFire();
-						trig++;
 					}
-					System.err.println("****");
 
 					try {
 						//Pause so that we have the opportunity to cancel the bonding request.

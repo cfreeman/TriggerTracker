@@ -18,42 +18,33 @@
  */
 package org.triggertracker;
 
-import java.util.ArrayList;
-
-public class ChainTrigger implements Trigger {
-
-	// The chain of triggers to fire one at a time.
-	private ArrayList<Trigger> chainOfTriggers;
-
-	// The index of the current trigger in the chain.
-	private int currentTrigger;
+public class DelayedTrigger implements Trigger {
 
 	// Has this trigger gone off?
 	private boolean hasTriggered;
 
 	// The action to fire if the trigger has been tripped.
-	private Action action;	
+	private Action action;
 
-	/** 
-	 * @param actionToTrigger The action to trigger once everything in the chain has triggered.
-	 */
-	public ChainTrigger(Action actionToTrigger) {
-		action = actionToTrigger;
-		chainOfTriggers = new ArrayList<Trigger>();
-		hasTriggered = false;
-		currentTrigger = 0;
-	}
+	// The number of seconds to wait until triggering action.
+	private long seconds;
+
+	// When this trigger was first tested.
+	private long startTime = -1;
 
 	/**
-	 * Adds a trigger to the end of the chain. All other triggers in the chain
-	 * must be fired before this trigger will fire.
+	 * Constructor.
 	 *
-	 * @param trigger The trigger to test at the end of the chain.
+	 * @param secondsToTrigger The number of seconds till the  
+	 * @param actionToTrigger The action to trigger, when the time is the specified number
+	 * of minutes past the hour.
 	 */
-	public void addTrigger(Trigger trigger) {
-		chainOfTriggers.add(trigger);
+	public DelayedTrigger(long secondsToTrigger, Action actionToTrigger) {
+		seconds = secondsToTrigger;
+		action = actionToTrigger;
+		hasTriggered = false;
 	}
-	
+
 	@Override
 	public void setAction(Action actionToTrigger) {
 		action = actionToTrigger;
@@ -66,22 +57,16 @@ public class ChainTrigger implements Trigger {
 
 	@Override
 	public void testFire() {
+		if (startTime == -1) {
+			startTime = (System.currentTimeMillis() / 1000); 
+		}
+
 		if (!hasTriggered) {
-			Trigger activeTrigger = chainOfTriggers.get(currentTrigger);
+			long currentTime = (System.currentTimeMillis() / 1000);	
 
-			// Move onto the next trigger in the chain if the 
-			if (activeTrigger.hasTriggered()) {
-				currentTrigger++;
-			} else {
-				activeTrigger.testFire();
-			}
-
-			// If we are the end of the chain - all done.
-			if (currentTrigger == chainOfTriggers.size()) {
+			if ((currentTime - startTime) > seconds) {
 				hasTriggered = true;
-				if (action != null) {
-					action.trigger();
-				}
+				action.trigger();
 			}
 		}
 	}
