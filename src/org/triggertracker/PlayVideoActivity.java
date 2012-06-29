@@ -28,6 +28,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.VideoView;
 
 public class PlayVideoActivity extends Activity {		
@@ -35,32 +36,24 @@ public class PlayVideoActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-        // Work out if we are already playing this audio or not.
-        boolean isPlaying = false;
-        if (savedInstanceState != null) {
-        	isPlaying = savedInstanceState.getBoolean("playing");
-        }
+		File f = Environment.getExternalStorageDirectory();
+        getWindow().setFormat(PixelFormat.TRANSLUCENT);
+        LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+        VideoView videoHolder = new VideoView(this);
+        videoHolder.setLayoutParams(params);
+        setContentView(videoHolder);
+        videoHolder.setVideoURI(Uri.parse(f + "/" + getIntent().getStringExtra("videoTrigger")));
+        // Get focus before playing the video.
+        videoHolder.requestFocus();
+        videoHolder.start();
 
-        if (!isPlaying) {
-			File f = Environment.getExternalStorageDirectory();
-	        getWindow().setFormat(PixelFormat.TRANSLUCENT);
-	        LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-	        VideoView videoHolder = new VideoView(this);
-	        videoHolder.setLayoutParams(params);
-	        setContentView(videoHolder);
-	        videoHolder.setVideoURI(Uri.parse(f + "/" + getIntent().getStringExtra("videoTrigger")));
-	        // Get focus before playing the video.
-	        videoHolder.requestFocus();
-	        videoHolder.start();
-
-	        // Close this activity when the video finishes playing back.
-	        videoHolder.setOnCompletionListener(new OnCompletionListener() {
-				@Override
-				public void onCompletion(MediaPlayer player) {
-					finish();
-				}
-	        });
-        }
+        // Close this activity when the video finishes playing back.
+        videoHolder.setOnCompletionListener(new OnCompletionListener() {
+			@Override
+			public void onCompletion(MediaPlayer player) {
+				finish();
+			}
+        });
 	}
 
     @Override
