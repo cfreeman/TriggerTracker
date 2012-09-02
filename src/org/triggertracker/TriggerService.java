@@ -109,65 +109,69 @@ public class TriggerService extends Service implements LocationListener {
 
 			public void run() {            	
 				Looper.prepare();
-
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 
 				// Path 1.
-				triggers.add(createDelayTrigger(30, createAudioAction("juliemsg.m4a")));
+				/*
 				ChainTrigger chain = new ChainTrigger(null);
-				chain.addTrigger(createGPSTrigger(-27.47157563f, 153.018449843f, createVideoAction("lamp.m4v")));
-				chain.addTrigger(createDelayTrigger(151, createAudioAction("Billymsg.m4a")));
+				chain.addTrigger(createDelayTrigger(440, createAudioAction("TimeTriggerdrop-sculp-overJulie.m4a")));
+				chain.addTrigger(createGPSTrigger(-27.47157563f, 153.018449843f, createVideoAction("Lamp.m4v")));
+				chain.addTrigger(createDelayTrigger(180, createAudioAction("Timetriggerlamp(billy).m4a")));				 
+				chain.addTrigger(createGPSTrigger(-27.47184812f, 153.01792010f, createAudioAction("stairs(Billy).m4a")));
+				chain.addTrigger(createDelayTrigger(180, createAudioAction("TimeTriggerstairs(lilly).m4a")));				
+				chain.addTrigger(createGPSTrigger(-27.47081530f, 153.01765859f, createVideoAction("Grassy.m4v")));
+				chain.addTrigger(createDelayTrigger(300, createAudioAction("TimeTriggerGrassy(Alice).m4a")));
 				triggers.add(chain);
-
-				ChainTrigger chain2 = new ChainTrigger(null);
-				chain2.addTrigger(createGPSTrigger(-27.47181718f, 153.01791608f, createAudioAction("stairs.m4a")));
-				chain2.addTrigger(createDelayTrigger(180, createAudioAction("msglillyfromstairs.m4a")));
-				triggers.add(chain2);
-
-				ChainTrigger chain3 = new ChainTrigger(null);
-				chain3.addTrigger(createGPSTrigger(-27.470827201f, 153.017663956f, createVideoAction("grassy.m4v")));
-				chain3.addTrigger(createDelayTrigger(300, createAudioAction("alicefromgrassy.m4a")));
-				triggers.add(chain3);
+				*/
 
 				// Path 2.
 				/*
 				ChainTrigger chain = new ChainTrigger(null);
 				chain.addTrigger(createGPSTrigger(-27.47184752f, 153.01894940f, createVideoAction("sculpture.m4v")));
-				chain.addTrigger(createDelayTrigger(300, createAudioAction("juliemsg.m4a")));
+				chain.addTrigger(createDelayTrigger(300, createAudioAction("TimeTriggerdrop-sculp-overJulie.m4a")));
+				chain.addTrigger(createGPSTrigger(-27.47157563f, 153.018449843f, createVideoAction("Lamp.m4v")));
+				chain.addTrigger(createDelayTrigger(180, createAudioAction("Timetriggerlamp(billy).m4a")));
+				chain.addTrigger(createGPSTrigger(-27.47184812f, 153.01792010f, createAudioAction("stairs(Billy).m4a")));
+				chain.addTrigger(createDelayTrigger(180, createAudioAction("TimeTriggerstairs(lilly).m4a")));
+				chain.addTrigger(createGPSTrigger(-27.47081530f, 153.01765859f, createVideoAction("Grassy.m4v")));
+				chain.addTrigger(createDelayTrigger(300, createAudioAction("TimeTriggerGrassy(Alice).m4a")));
 				triggers.add(chain);
-
-				ChainTrigger chain2 = new ChainTrigger(null);
-				chain2.addTrigger(createGPSTrigger(-27.47157563f, 153.018449843f, createVideoAction("lamp.m4v")));
-				chain2.addTrigger(createDelayTrigger(180, createAudioAction("Billymsg.m4a")));
-				triggers.add(chain2);
-
-				triggers.add(createGPSTrigger(-27.47181718f, 153.01791608f, createAudioAction("stairs.m4a")));
-
-				ChainTrigger chain3 = new ChainTrigger(null);
-				chain3.addTrigger(createGPSTrigger(-27.470827201f, 153.017663956f, createVideoAction("grassy.m4v")));
-				chain3.addTrigger(createDelayTrigger(300, createAudioAction("alicefromgrassy.m4a")));
-				triggers.add(chain3);
 				*/
 
 				// Path 3.
 				/*
 				ChainTrigger chain = new ChainTrigger(null);
-				chain.addTrigger(createGPSTrigger(-27.47200876f, 153.01884547f, createVideoAction("dropbox.m4v")));
-				chain.addTrigger(createDelayTrigger(300, createAudioAction("juliemsg.m4a")));
+				chain.addTrigger(createGPSTrigger(-27.47200876f, 153.01884547f, createVideoAction("Dropbox.m4v")));
+				chain.addTrigger(createDelayTrigger(300, createAudioAction("TimeTriggerdrop-sculp-overJulie.m4a")));
+				chain.addTrigger(createGPSTrigger(-27.47157563f, 153.018449843f, createVideoAction("Lamp.m4v")));
+				chain.addTrigger(createDelayTrigger(180, createAudioAction("Timetriggerlamp(billy).m4a")));
+				chain.addTrigger(createGPSTrigger(-27.47184812f, 153.01792010f, createAudioAction("stairs(Billy).m4a")));
+				chain.addTrigger(createDelayTrigger(180, createAudioAction("TimeTriggerstairs(lilly).m4a")));
+				chain.addTrigger(createGPSTrigger(-27.47081530f, 153.01765859f, createVideoAction("Grassy.m4v")));
+				chain.addTrigger(createDelayTrigger(300, createAudioAction("TimeTriggerGrassy(Alice).m4a")));
 				triggers.add(chain);
-
-				ChainTrigger chain2 = new ChainTrigger(null);
-				chain2.addTrigger(createGPSTrigger(-27.47157563f, 153.018449843f, createVideoAction("lamp.m4v")));
-				chain2.addTrigger(createDelayTrigger(180, createAudioAction("Billymsg.m4a")));
-				triggers.add(chain2);
-
-				triggers.add(createGPSTrigger(-27.47181718f, 153.01791608f, createAudioAction("stairs.m4a")));
-
-				ChainTrigger chain3 = new ChainTrigger(null);
-				chain3.addTrigger(createGPSTrigger(-27.470827201f, 153.017663956f, createVideoAction("grassy.m4v")));
-				chain3.addTrigger(createDelayTrigger(300, createAudioAction("alicefromgrassy.m4a")));
-				triggers.add(chain3);
 				*/
+
+				// Path 4.
+				/*
+				ChainTrigger chain = new ChainTrigger(null);
+				chain.addTrigger(createGPSTrigger(-27.47166904f, 153.01829696f, createAudioAction("Cafe(ruth).m4a")));
+				chain.addTrigger(createDelayTrigger(118, createAudioAction("TimeTriggerCafe.m4a")));
+				chain.addTrigger(createGPSTrigger(-27.47081530f, 153.01765859f, createVideoAction("Grassy.m4v")));
+				chain.addTrigger(createGPSTrigger(-27.47139597f, 153.01881194f, createVideoAction("Mirror.m4v")));
+				chain.addTrigger(createGPSTrigger(-27.47200876f, 153.01884547f, createVideoAction("Dropbox.m4v")));
+				chain.addTrigger(createDelayTrigger(307, createAudioAction("Timetriggeroverpass-dropbox(alice).m4a")));
+				triggers.add(chain);
+				*/
+
+				// Path 5.
+				ChainTrigger chain = new ChainTrigger(null);
+				chain.addTrigger(createGPSTrigger(-27.47166904f, 153.01829696f, createAudioAction("Cafe(ruth).m4a")));
+				chain.addTrigger(createDelayTrigger(118, createAudioAction("TimeTriggerCafe.m4a")));
+				chain.addTrigger(createGPSTrigger(-27.47081530f, 153.01765859f, createVideoAction("Grassy.m4v")));
+				chain.addTrigger(createGPSTrigger(-27.47139597f, 153.01881194f, createVideoAction("Mirror.m4v")));
+				chain.addTrigger(createDelayTrigger(590, createAudioAction("Timetriggeroverpass-dropbox(alice).m4a")));
+				triggers.add(chain);
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             	PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TeethTracker");
