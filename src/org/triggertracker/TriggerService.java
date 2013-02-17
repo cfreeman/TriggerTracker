@@ -55,8 +55,8 @@ public class TriggerService extends Service implements LocationListener {
         int maxVolume = amanager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
         
         mDynamicST = new DynamicSoundTrack(lm, maxVolume);
-        mDynamicST.addTrack("/TICC_WAV_EG1.m4a", 5.0f, 5.0f);
-        mDynamicST.addTrack("/test2.mp3", 10.0f, 10.0f);
+        mDynamicST.addTrack("/trackA.m4a", -27.512920f, 153.034927f);
+        mDynamicST.addTrack("/trackB.m4a", -27.511302f, 153.035275f);
 
 		new Thread(new Runnable() {		   
 

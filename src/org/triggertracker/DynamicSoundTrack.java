@@ -110,7 +110,7 @@ public class DynamicSoundTrack {
             lon = newLon;
 
             player = new MediaPlayer();
-            player.setDataSource(Environment.getExternalStorageDirectory() + "/TICC_WAV_EG1.m4a");
+            player.setDataSource(Environment.getExternalStorageDirectory() + newTrack);
             player.prepare();
             player.setLooping(true);
             player.start();
@@ -127,12 +127,11 @@ public class DynamicSoundTrack {
             Location.distanceBetween(latitude, longitude, lat, lon, distance);            
 
             // Volume is the inverse of the distance. The closer to the desired location, the louder the track.
-            // distance[0]
-            float volume = (MAX_DISTANCE - distance[0]) / MAX_DISTANCE;
+            float volume = Math.max(0.0f, (MAX_DISTANCE - distance[0]));
+            volume = volume / MAX_DISTANCE;
             volume = volume * (float) mMaxVolume;
 
             player.setVolume(volume, volume);
-            System.err.println("SoundTrack Loc - [" + latitude + ", " + longitude + "] - " + distance[0] + ":" + volume);
         }
 
         /**
