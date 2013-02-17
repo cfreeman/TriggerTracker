@@ -18,36 +18,35 @@
  */
 package org.triggertracker;
 
-import android.app.Application;
-import android.content.Context;
-import android.content.Intent;
+import android.media.MediaPlayer;
+import android.os.Environment;
 
 public class PlayAudioAction implements Action {
 
 	// The audio to play back when the action is triggered.
-	private String audioToTrigger;
-
-	// The parent application for this audio playback action.
-	private Application parentApplication;
-
-	// The parent context for this audio playback action.
-	private Context parentContext;
+	private String mAudioToTrigger;
 
 	/**
-	 * @param audioFile The audio file that you want this action to play
+	 * Constructor
+	 *
+	 * @param audioFile The path to the audio file on the external file storage that you want this action to play.
 	 */
-	public PlayAudioAction(Application app, Context context, String audioFile) {
-		parentApplication = app;
-		parentContext = context;
-		audioToTrigger = audioFile;
+	public PlayAudioAction(String audioFile) {
+		mAudioToTrigger = audioFile;
 	}
 
 	@Override
 	public void trigger() {
-		System.err.println("Triggering PlayAudio - " + audioToTrigger);
-		Intent dialogIntent = new Intent(parentContext, PlayAudioActivity.class);
-		dialogIntent.putExtra("audioTrigger", audioToTrigger);
-		dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		parentApplication.startActivity(dialogIntent);
+		System.err.println("Triggering PlayAudio - " + mAudioToTrigger);
+
+		MediaPlayer mp = new MediaPlayer();
+        try {
+            mp.setDataSource(Environment.getExternalStorageDirectory() + mAudioToTrigger);
+            mp.prepare();
+            mp.start();
+
+        } catch (Exception e) {
+            System.err.println("Unable to play audio action: " + mAudioToTrigger);
+        }
 	}
 }

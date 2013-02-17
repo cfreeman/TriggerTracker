@@ -55,61 +55,18 @@ public class TriggerService extends Service implements LocationListener {
         int maxVolume = amanager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
         
         mDynamicST = new DynamicSoundTrack(lm, maxVolume);
-        mDynamicST.addTrack("/trackA.m4a", -27.512920f, 153.034927f);
-        mDynamicST.addTrack("/trackB.m4a", -27.511302f, 153.035275f);
+        //mDynamicST.addTrack("/trackA.m4a", -27.514204f, 153.034658f);
+        mDynamicST.addTrack("/trackB.m4a", -27.511840f, 153.035415f);
 
 		new Thread(new Runnable() {		   
-
-			/**
-			 * Helper method for creating GPS triggers.
-			 * @param lat The latitude that trips the trigger.
-			 * @param lon The longitude that trips the trigger.
-			 * @param actionToFire The action to fire when the trigger is tripped.
-			 * 
-			 * @return The constructed trigger.
-			 */
-			Trigger createGPSTrigger(float lat, float lon, Action actionToFire) {
-				return new GPSTrigger(lm, lat, lon, actionToFire);
-			}
-
-			Trigger createTimeTrigger(int minutes, Action actionToFire) {
-				return new TimeTrigger(minutes, actionToFire);
-			}
-
-			Trigger createDelayTrigger(long seconds, Action actionToFire) {
-				return new DelayedTrigger(seconds, actionToFire);
-			}
-
-			/**
-			 * Helper method for creating video playback actions.
-			 *
-			 * @param video The name of the video file to playback. 
-			 *
-			 * @return The constructed action.
-			 */
-			Action createVideoAction(String video) {
-				return new PlayVideoAction(getApplication(), getBaseContext(), video);
-			}
-
-			Action createAudioAction(String audio) {
-				return new PlayAudioAction(getApplication(), getBaseContext(), audio);
-			}
-
-			/**
-			 * Helper method for creating call back actions.
-			 * 
-			 * @param callBack The ID of the callback to trigger.
-			 * @param number The phone number to dial.
-			 *
-			 * @return The constructed action.
-			 */
-			Action createCallAction(String callBack, String number) {
-				return new CallBackAction(callBack, number);
-			}
 
 			public void run() {            	
 				Looper.prepare();
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
+
+				ChainTrigger chain = new ChainTrigger(null);
+				chain.addTrigger(new DelayedTrigger(10, new PlayAudioAction("/trackA.m4a")));
+				triggers.add(chain);
 
 				// Path 5.
 				/*
