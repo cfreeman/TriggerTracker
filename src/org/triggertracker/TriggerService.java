@@ -18,17 +18,7 @@
  */
 package org.triggertracker;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
-import org.yaml.snakeyaml.Yaml;
 
 import android.app.Service;
 import android.content.Context;
@@ -37,12 +27,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
-import android.media.SoundPool.OnLoadCompleteListener;
-import android.media.SoundPool;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -52,10 +37,7 @@ public class TriggerService extends Service implements LocationListener {
 	private boolean isRunning = true;
 	private LocationManager lm;
 	private TrackerConfiguration config;
-	
-	
-	
-	
+	private DynamicSoundTrack mDynamicST;
 		
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -68,30 +50,15 @@ public class TriggerService extends Service implements LocationListener {
 		lm = (LocationManager) getSystemService(LOCATION_SERVICE);
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, POLL_INTERVAL, 1.0f, this);
 		
+        // Scale volume percent by max volume.
+        AudioManager amanager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        int maxVolume = amanager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
         
-        MediaPlayer soundTrack1 = new MediaPlayer();
-        MediaPlayer soundTrack2 = new MediaPlayer();
-        
-        try {
-            File f = Environment.getExternalStorageDirectory();
-            soundTrack1.setDataSource(f + "/TICC_WAV_EG1.m4a");
-            soundTrack1.prepare();
-            soundTrack1.start();
-            
-            soundTrack2.setDataSource(f + "/test2.mp3");
-            soundTrack2.prepare();
-            soundTrack2.start();
+        mDynamicST = new DynamicSoundTrack(lm, maxVolume);
+        mDynamicST.addTrack("/TICC_WAV_EG1.m4a", 5.0f, 5.0f);
+        mDynamicST.addTrack("/test2.mp3", 10.0f, 10.0f);
 
-        } catch (IllegalArgumentException e) {
-            System.err.println("Unable to play audio");
-        } catch (IllegalStateException e) {
-            System.err.println("Unable to play audio");
-        } catch (IOException e) {
-            System.err.println("Unable to play audio");
-        }
-		
-
-		new Thread(new Runnable() {
+		new Thread(new Runnable() {		   
 
 			/**
 			 * Helper method for creating GPS triggers.
@@ -162,6 +129,9 @@ public class TriggerService extends Service implements LocationListener {
 					// Prevent the device from going to sleep.
 	                wl.acquire();
 
+	                // Update the sound levels in the dynamic sound track.
+	                mDynamicST.updateLevels();
+
 					// For each registered trigger - see if it fires.
 					for (Trigger t : triggers) {
 						t.testFire();
@@ -177,15 +147,18 @@ public class TriggerService extends Service implements LocationListener {
 
 				// All done, the device can now go to sleep.
 				wl.release();
+
+				// All done, turn the sound track off.
+				mDynamicST.shutdown();
 		  }
-		}).start();     
+		}).start();
 
 		return(START_NOT_STICKY);
 	}
-  
+
 	@Override
   	public void onDestroy() {
-	  isRunning = false;
+	  isRunning = false;	  
   	}
   
   	@Override
