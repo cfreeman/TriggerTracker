@@ -36,8 +36,11 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.media.SoundPool.OnLoadCompleteListener;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -49,6 +52,10 @@ public class TriggerService extends Service implements LocationListener {
 	private boolean isRunning = true;
 	private LocationManager lm;
 	private TrackerConfiguration config;
+	
+	
+	
+	
 		
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -59,7 +66,30 @@ public class TriggerService extends Service implements LocationListener {
 
 		//Enable the GPS - updating every second or if we move more than 1 meter.
 		lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, POLL_INTERVAL, 1.0f, this);		
+		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, POLL_INTERVAL, 1.0f, this);
+		
+        
+        MediaPlayer soundTrack1 = new MediaPlayer();
+        MediaPlayer soundTrack2 = new MediaPlayer();
+        
+        try {
+            File f = Environment.getExternalStorageDirectory();
+            soundTrack1.setDataSource(f + "/TICC_WAV_EG1.m4a");
+            soundTrack1.prepare();
+            soundTrack1.start();
+            
+            soundTrack2.setDataSource(f + "/test2.mp3");
+            soundTrack2.prepare();
+            soundTrack2.start();
+
+        } catch (IllegalArgumentException e) {
+            System.err.println("Unable to play audio");
+        } catch (IllegalStateException e) {
+            System.err.println("Unable to play audio");
+        } catch (IOException e) {
+            System.err.println("Unable to play audio");
+        }
+		
 
 		new Thread(new Runnable() {
 
@@ -124,20 +154,6 @@ public class TriggerService extends Service implements LocationListener {
 				chain.addTrigger(createDelayTrigger(590, createAudioAction("Timetriggeroverpass-dropbox(alice).m4a")));
 				triggers.add(chain);
 				*/
-				
-				MediaPlayer mp = new MediaPlayer();
-		        try {
-		            File f = Environment.getExternalStorageDirectory();
-		            mp.setDataSource(f + "/TICC_WAV_EG1.m4a");
-		            mp.prepare();
-		            mp.start();
-		        } catch (IllegalArgumentException e) {
-		            System.err.println("Unable to play audio");
-		        } catch (IllegalStateException e) {
-		            System.err.println("Unable to play audio");
-		        } catch (IOException e) {
-		            System.err.println("Unable to play audio");
-		        }
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             	PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TeethTracker");

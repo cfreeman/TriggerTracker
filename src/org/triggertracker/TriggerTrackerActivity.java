@@ -18,11 +18,18 @@
  */
 package org.triggertracker;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
+import android.os.Environment;
 
 public class TriggerTrackerActivity extends Activity {
 	/**
@@ -40,7 +47,7 @@ public class TriggerTrackerActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);        
+        super.onCreate(savedInstanceState);
 
         // Spawn the trigger service to run in the background, but only if it is not running.        
         if (!isTrackingServiceRunning()) {
