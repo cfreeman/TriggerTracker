@@ -38,7 +38,7 @@ public class TriggerService extends Service implements LocationListener {
 	private LocationManager lm;
 	private TrackerConfiguration config;
 	private DynamicSoundTrack mDynamicST;
-		
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		System.err.println("Starting Service");		
@@ -49,35 +49,24 @@ public class TriggerService extends Service implements LocationListener {
 		//Enable the GPS - updating every second or if we move more than 1 meter.
 		lm = (LocationManager) getSystemService(LOCATION_SERVICE);
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, POLL_INTERVAL, 1.0f, this);
-		
+
         // Scale volume percent by max volume.
         AudioManager amanager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         int maxVolume = amanager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
-        
+
         mDynamicST = new DynamicSoundTrack(lm, maxVolume);
         //mDynamicST.addTrack("/trackA.m4a", -27.514204f, 153.034658f);
         mDynamicST.addTrack("/trackB.m4a", -27.511840f, 153.035415f);
 
-		new Thread(new Runnable() {		   
+		new Thread(new Runnable() {
 
-			public void run() {            	
+			public void run() {
 				Looper.prepare();
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 
 				ChainTrigger chain = new ChainTrigger(null);
 				chain.addTrigger(new DelayedTrigger(10, new PlayAudioAction("/trackA.m4a")));
 				triggers.add(chain);
-
-				// Path 5.
-				/*
-				ChainTrigger chain = new ChainTrigger(null);
-				chain.addTrigger(createGPSTrigger(-27.47166904f, 153.01829696f, createAudioAction("Cafe(ruth).m4a")));
-				chain.addTrigger(createDelayTrigger(118, createAudioAction("TimeTriggerCafe.m4a")));
-				chain.addTrigger(createGPSTrigger(-27.47081530f, 153.01765859f, createVideoAction("Grassy.m4v")));
-				chain.addTrigger(createGPSTrigger(-27.47139597f, 153.01881194f, createVideoAction("Mirror.m4v")));
-				chain.addTrigger(createDelayTrigger(590, createAudioAction("Timetriggeroverpass-dropbox(alice).m4a")));
-				triggers.add(chain);
-				*/
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             	PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TeethTracker");
@@ -117,7 +106,7 @@ public class TriggerService extends Service implements LocationListener {
   	public void onDestroy() {
 	  isRunning = false;	  
   	}
-  
+
   	@Override
   	public IBinder onBind(Intent intent) {
   		return(null);
@@ -126,17 +115,16 @@ public class TriggerService extends Service implements LocationListener {
 	@Override
 	public void onLocationChanged(Location arg0) {
 	}
-	
+
 	@Override
 	public void onProviderDisabled(String arg0) {
 	}
-	
+
 	@Override
 	public void onProviderEnabled(String arg0) {
 	}
-	
+
 	@Override
 	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
 	}
-
 }
