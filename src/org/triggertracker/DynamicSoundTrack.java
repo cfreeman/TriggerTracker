@@ -130,6 +130,7 @@ public class DynamicSoundTrack {
             float volume = Math.max(0.0f, (MAX_DISTANCE - distance[0]));
             volume = volume / MAX_DISTANCE;
             volume = volume * (float) mMaxVolume;
+            //System.err.println("Distance:" + distance[0] + ":" + volume);
 
             player.setVolume(volume, volume);
         }
@@ -145,5 +146,5 @@ public class DynamicSoundTrack {
     private List<Track> mAllTracks;
     private int mMaxVolume;
     private LocationManager mLocationManager;
-    private static float MAX_DISTANCE = 250.0f;
+    private static float MAX_DISTANCE = 150.0f;
 }

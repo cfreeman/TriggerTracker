@@ -41,7 +41,7 @@ public class TriggerService extends Service implements LocationListener {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		System.err.println("Starting Service");		
+		System.err.println("Starting Service");
 
 		//config = new TrackerConfiguration();
 		//config.loadFromYaml("/trackerConfig.yml");
@@ -55,8 +55,17 @@ public class TriggerService extends Service implements LocationListener {
         int maxVolume = amanager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
 
         mDynamicST = new DynamicSoundTrack(lm, maxVolume);
-        //mDynamicST.addTrack("/trackA.m4a", -27.514204f, 153.034658f);
-        mDynamicST.addTrack("/trackB.m4a", -27.511840f, 153.035415f);
+        // local test.
+//        mDynamicST.addTrack("/CreepyKidParkLoop_v01MP3.mp3", -27.511259f, 153.035278f);
+//        mDynamicST.addTrack("/DeadTeacherZoneLoop_v01MP3.mp3", -27.512991f, 153.034958f);
+
+        // Urban Village
+        mDynamicST.addTrack("/CreepyKidParkLoop_v01MP3.mp3", -27.453684f, 153.012543f);
+        mDynamicST.addTrack("/DeadTeacherZoneLoop_v01MP3.mp3", -27.452522f, 153.015427f);
+        mDynamicST.addTrack("/HappyParkLoop_v01MP3.mp3", -27.454931f, 153.015015f);
+        mDynamicST.addTrack("/HustleBustleCityAtmosLoop_v01MP3.mp3", -27.453665f, 153.014282f);
+        mDynamicST.addTrack("/UrbanConstructionLoop_v01MP3.mp3", -27.453779f, 153.015640f);
+        mDynamicST.addTrack("/LaBoiteLiftTempLoop_v01MP3.mp3", -27.454552f, 153.013412f);
 
 		new Thread(new Runnable() {
 
@@ -64,9 +73,9 @@ public class TriggerService extends Service implements LocationListener {
 				Looper.prepare();
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 
-				ChainTrigger chain = new ChainTrigger(null);
-				chain.addTrigger(new DelayedTrigger(10, new PlayAudioAction("/trackA.m4a")));
-				triggers.add(chain);
+				//ChainTrigger chain = new ChainTrigger(null);
+				//chain.addTrigger(new DelayedTrigger(10, new PlayAudioAction("/trackA.m4a")));
+				//triggers.add(chain);
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             	PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TeethTracker");
@@ -104,7 +113,7 @@ public class TriggerService extends Service implements LocationListener {
 
 	@Override
   	public void onDestroy() {
-	  isRunning = false;	  
+	  isRunning = false;
   	}
 
   	@Override
