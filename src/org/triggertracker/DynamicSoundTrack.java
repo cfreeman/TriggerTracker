@@ -38,9 +38,9 @@ public class DynamicSoundTrack {
      * tracks, the sound levels will be lower.
      * @param maxVolume The maximum volume permitted for the dynamic sound track. 
      */
-    public DynamicSoundTrack(LocationManager locMan, int maxVolume) {
+    public DynamicSoundTrack(int maxVolume) {
         mAllTracks = new ArrayList<Track>();        
-        mLocationManager = locMan;
+        //mLocationManager = locMan;
         mMaxVolume = maxVolume;
     }
 
@@ -66,9 +66,9 @@ public class DynamicSoundTrack {
      * reported by the GPS unit, make tracks closer to the current GPS location louder
      * than those further away.
      */
-    public void updateLevels() {
-        Location loc = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER); 
-
+    public void updateLevels(Location loc) {
+        //Location loc = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER); 
+        
         if (loc != null) {
             for (Track t : mAllTracks) {
                 t.updateLevel(loc.getLatitude(), loc.getLongitude());
