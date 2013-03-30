@@ -54,7 +54,6 @@ public class TriggerTrackerActivity extends Activity {
 	String mCallbackText;
 	
 	private PlayerRadarView radar;
-	
 	private ProximitySurfaceView canvas;
 
 	/**

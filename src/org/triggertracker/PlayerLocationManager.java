@@ -13,11 +13,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import android.R.string;
 import android.location.Location;
-import android.telephony.TelephonyManager;
 
 public class PlayerLocationManager {
+	
+	//max distance between any 2 players for UI update
+	static final int MAX_PLAYER_PROXIMITY = 250;
+	
+	//min distance between any 2 players for UI update
+	static final int MIN_PLAYER_PROXIMITY = 0;
 	
 	/**
      * Constructor.
@@ -35,6 +39,7 @@ public class PlayerLocationManager {
 			    URL playerTracker = new URL("http://thisiscapitalcity.heroku.com/players/new?device_id="
 			    						     + this.mDeviceID + "&lat=" + loc.getLatitude() + "&lon=" + loc.getLongitude());
 			    URLConnection trackerConnection = playerTracker.openConnection();
+			    trackerConnection.setConnectTimeout(10000);
 			    trackerConnection.getContentLength();
 	
 			} catch (MalformedURLException e) {
@@ -60,6 +65,7 @@ public class PlayerLocationManager {
 			// Read the JSON from the server.
 			while ((inputLine = in.readLine()) != null) {
 				JSONBlob = JSONBlob + inputLine;
+				System.err.println("json blob: " + inputLine + "\n");
 			}
 			in.close();
 
@@ -94,6 +100,54 @@ public class PlayerLocationManager {
 		return mPlayers;
 	}
 
+	public int distanceToClosestPlayer(Location loc){
+		
+		//if no location provided then return the max distance
+		if(loc == null){
+			return MAX_PLAYER_PROXIMITY;
+		}
+		
+		float closestPlayerDistance = MAX_PLAYER_PROXIMITY;
+        float[] distance = new float[1];
+        distance[0] = MAX_PLAYER_PROXIMITY;
+        
+        for(int i = 0; i < mPlayers.size(); i++){
+        	if(!(mPlayers.get(i).getDeviceID().equals(mDeviceID))){
+        		
+        		//find distance between loc and mPlayer locations
+        		Location.distanceBetween(
+        				loc.getLatitude(),
+        				loc.getLongitude(),
+        				mPlayers.get(i).getLat(),
+        				mPlayers.get(i).getLon(),
+        				distance);
+            	
+            	System.err.println(
+            			"Distance between (" + loc.getLatitude() + "," + loc.getLongitude() 
+            			+ ") and (" 
+            			+ mPlayers.get(i).getLat()+ "," +  mPlayers.get(i).getLon() 
+            			+ ") is: " + (int)distance[0]
+            			);
+        	
+            	//if the new player is closer then the current min distance then update min distance
+        		if(distance[0] < closestPlayerDistance){
+        			closestPlayerDistance = distance[0];
+        		}
+        	}
+        }
+        
+        //check that closestPlayerDistance is within limits
+        if(closestPlayerDistance > MAX_PLAYER_PROXIMITY){
+        	closestPlayerDistance = MAX_PLAYER_PROXIMITY;
+        } else {
+	        if(closestPlayerDistance < MIN_PLAYER_PROXIMITY){
+	        	closestPlayerDistance = MIN_PLAYER_PROXIMITY;
+	        }
+        }
+		
+		return (int)closestPlayerDistance;
+	}
+	
 	private ArrayList<Player> mPlayers;
 	final String mDeviceID; 
 

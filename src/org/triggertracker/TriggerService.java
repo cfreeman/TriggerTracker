@@ -84,7 +84,8 @@ public class TriggerService extends Service implements LocationListener {
         return mMessenger.getBinder();
     }
     
-    class IncomingHandler extends Handler { // Handler of incoming messages from clients.
+    // Handler of incoming messages from clients.
+    class IncomingHandler extends Handler { 
         @Override
         public void handleMessage(Message msg) {
         	System.err.println("Message Received to Service");
@@ -121,10 +122,9 @@ public class TriggerService extends Service implements LocationListener {
     final Messenger mMessenger = new Messenger(new IncomingHandler());
 
     private void sendMessageToUI(ArrayList<Player> playerLocations) {
-    	//System.err.println("Messaging Code " + mClients.size());
         for (int i=mClients.size()-1; i>=0; i--) {
             try {
-                //Send data as a String
+                //Send data as a bundle
                 Bundle b = new Bundle();
                 b.putParcelableArrayList("org.triggertracker.Player", playerLocations);              
                 Message msg = Message.obtain(null, MSG_SET_PLAYERS);
@@ -133,7 +133,7 @@ public class TriggerService extends Service implements LocationListener {
                 System.err.println("Message Sent To Activity");
 
             } catch (RemoteException e) {
-                // The client is dead. Remove it from the list; we are going through the list from back to front so this is safe to do inside the loop.
+                // The client is dead. Remove it from the list
                 mClients.remove(i);
                 System.err.println("Messaging Error");
             }
@@ -148,7 +148,7 @@ public class TriggerService extends Service implements LocationListener {
                 System.err.println("Proximity Message Sent To Activity");
 
             } catch (RemoteException e) {
-                // The client is dead. Remove it from the list; we are going through the list from back to front so this is safe to do inside the loop.
+                // The client is dead. Remove it from the list
                 mClients.remove(i);
                 System.err.println("Messaging Error");
             }
@@ -232,60 +232,21 @@ public class TriggerService extends Service implements LocationListener {
 				while (isRunning) {
 					// Prevent the device from going to sleep.
 	                wl.acquire();
-	                
-	                for(int i = 0; i < triggers.size(); i++){
-	                	triggers.get(i).testFire();
-	                }
-	                
+	                                
 	                Location currentLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 	                
-	                //Update current location to server
+	                //Update current location at server
 	                playerLocMan.sendPlayerLocationData(currentLocation);
 	                
-	                //Get list of other player locations
-	                ArrayList<Player> results = playerLocMan.retrievePlayerLocationData();
-	                
-	                if(currentLocation != null){
-	                
-		                float closestPlayer = 255;
-		                
-		                float[] distance = new float[1];
-		                
-		                distance[0] = 255;
-		                
-		                for(int i = 0; i < results.size(); i++){
-		                	if(!(results.get(i).getDeviceID().equals(deviceID))){
-			        				Location.distanceBetween(currentLocation.getLatitude(),
-			        										currentLocation.getLongitude(),
-			        										 results.get(i).getLat(),
-			        										 results.get(i).getLon(),
-			        										 distance);
-			                	
-			                	System.err.println("Distance between (" 
-			                	+ currentLocation.getLatitude() + "," + currentLocation.getLongitude() 
-			                			+ ") and (" 
-			                	+ results.get(i).getLat()+ "," +  results.get(i).getLon() + ") is: " 
-			                			+ (int)distance[0]);
-		                	
-		                		if(distance[0] < closestPlayer){
-		                			closestPlayer = distance[0];
-		                		}
-		                	}
-		                }
-		                
-		                if(closestPlayer > 255){
-		                	closestPlayer = 255;
-		                }
-		                
-		                if(closestPlayer < 0){
-		                	closestPlayer = 0;
-		                }
-		                
-		                sendMessageToUI((int)closestPlayer);
-	                }
+	                //Get list of all player locations from server
+	                ArrayList<Player> allPlayerLocations = playerLocMan.retrievePlayerLocationData();
 	                
 	                //Send location list back to UI process
-	                sendMessageToUI(results);
+	                //Used by radar view but not proximity view
+	                //sendMessageToUI(allPlayerLocations);
+	                
+	                //find the distance to the nearest player and send to UI for proximity view
+	                sendMessageToUI(playerLocMan.distanceToClosestPlayer(currentLocation));
 
 	                // Update the sound levels in the dynamic sound track.
 	                mDynamicST.updateLevels(currentLocation);

@@ -10,14 +10,22 @@ public class Player implements Parcelable {
 	private float lat, lon;
 	private String deviceID;
 	
+	//Decimal format for making location data more readable
 	private DecimalFormat df = new DecimalFormat("####.####");
 
+	/**
+	 * Constructor.
+	 *
+	 * @param newID The ID of the player
+	 * @param newLat The current Latitude of the player
+	 * @param newLon The current Longitude of the player
+	 * @param newLon The device ID of the device the player is using
+	 */
     Player(int newID, float newLat, float newLon, String deviceID) {
     	id = newID;
     	lat = newLat;
         lon = newLon;
         this.deviceID = deviceID;
-        System.err.println("New Player " + id + ": " + lat + "," + lon + "," + deviceID);
     }
     
     public String toString() {
