@@ -196,31 +196,31 @@ public class TriggerService extends Service implements LocationListener {
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 				
 				//5 min delay
-				triggers.add(new DelayedTrigger(300, new PlayAudioAction("/01 Trigger 1 Audio Test.mp3")));
+				triggers.add(new DelayedTrigger(300, new PlayAudioAction("/Trigger 1 - time trigger welcome to capital city.mp3")));
 				
 				//45 min delay
-				triggers.add(new DelayedTrigger(2700, new PlayAudioAction("/01 Trigger 1 Audio Test.mp3")));
+				//triggers.add(new DelayedTrigger(2700, new PlayAudioAction("/Trigger 1 - time trigger welcome to capital city.mp3")));
 
 				//1
-				triggers.add(new GPSTrigger(lm, -27.45440788489501f, 153.01422536373138f, new PlayAudioAction("/01 Trigger 1 Audio Test.mp3")));
+				triggers.add(new GPSTrigger(lm, -27.45440074449512f, 153.01421731710434f, new PlayAudioAction("/Trigger 1A - The Rock.mp3")));
 				
 				//2a
-				triggers.add(new GPSTrigger(lm, -27.454536412013972f, 153.01521241664886f, new PlayAudioAction("/02 Test Trigger 2A - happy park.mp3")));
+				triggers.add(new GPSTrigger(lm, -27.454536412013972f, 153.01512122154236f, new PlayAudioAction("/Trigger 2A - The Gazebo Dancing Man.mp3")));
 				
 				//2b
-				triggers.add(new GPSTrigger(lm, -27.453684322022596f, 153.01414489746094f, new PlayAudioAction("/03 trigger 2b - creepy park.mp3")));
+				triggers.add(new GPSTrigger(lm, -27.453698602914688f, 153.01406174898148f, new PlayAudioAction("/Trigger 2B - Dancing Lady - The Boys.mp3")));
 				
 				//3a
-				triggers.add(new GPSTrigger(lm, -27.4534415465741f, 153.01599025726318f, new PlayAudioAction("/04 Test Trigger 3A construction site.mp3")));
+				triggers.add(new GPSTrigger(lm, -27.45343678626586f, 153.01599830389023f, new PlayAudioAction("/Trigger 3A - The Duke construction site.mp3")));
 				
 				//3b
-				triggers.add(new GPSTrigger(lm, -27.45352723208754f, 153.01305055618286f, new PlayAudioAction("/05 Trigger 3b - creepy kids park.mp3")));
+				triggers.add(new GPSTrigger(lm, -27.453517711478224f, 153.0130559206009f, new PlayAudioAction("/Trigger 3B - Child Oracle - Creepy Playground.mp3")));
 				
 				//4a
-				triggers.add(new GPSTrigger(lm, -27.452746539394088f, 153.0151104927063f, new PlayAudioAction("/06 Test Trigger 4b - dead zone.mp3")));
+				triggers.add(new GPSTrigger(lm, -27.452734638548073f, 153.0151265859604f, new PlayAudioAction("/Trigger 4 - The Dead Zone - Teacher's Accomodation.mp3")));
 
 				//5
-				triggers.add(new GPSTrigger(lm, -27.453793808814694f, 153.01508098840714f, new PlayAudioAction("/07Test Final Trigger Evacuate .mp3")));
+				triggers.add(new GPSTrigger(lm, -27.453531992391877f, 153.0150943994522f, new PlayAudioAction("/Trigger 5 - The Room Mixdown 1.mp3")));
 				
 				//ChainTrigger chain = new ChainTrigger(null);
 				//chain.addTrigger(new DelayedTrigger(10, new PlayAudioAction("/trackA.m4a")));

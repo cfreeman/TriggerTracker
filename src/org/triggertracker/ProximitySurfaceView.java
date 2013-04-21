@@ -89,7 +89,7 @@ public class ProximitySurfaceView extends SurfaceView implements
 		static final int PROXIMITY_SCALE = 8;
 
 		final static int MAX_FLASH_VALUE = 35;
-		final static int MIN_FLASH_VALUE = 5;
+		final static int MIN_FLASH_VALUE = 1;
 
 		public int proximity = MAX_PLAYER_PROXIMITY;
 
@@ -152,11 +152,21 @@ public class ProximitySurfaceView extends SurfaceView implements
 		private void doDraw(Canvas canvas) {
 			canvas.restore();
 
-			backgroundColourReductionValue = MAX_FLASH_VALUE - (proximity / PROXIMITY_SCALE);
+			System.err.println("Proximity: " + proximity);
+			
+			if(proximity < 50){
+				backgroundColourReductionValue = MAX_FLASH_VALUE;
+			}else{
+				backgroundColourReductionValue = MIN_FLASH_VALUE;
+			}
+			
+			System.err.println("backgroundColourReductionValue: " + backgroundColourReductionValue);
+			
+			/*backgroundColourReductionValue = MAX_FLASH_VALUE - (proximity / PROXIMITY_SCALE);
 
 			if (backgroundColourReductionValue < MIN_FLASH_VALUE) {
 				backgroundColourReductionValue = MIN_FLASH_VALUE;
-			}
+			}*/
 
 			if (backgroundColourIntensity > 0 + backgroundColourReductionValue) {
 				backgroundColourIntensity -= backgroundColourReductionValue;
@@ -168,6 +178,14 @@ public class ProximitySurfaceView extends SurfaceView implements
 
 			//draw foreground image to screen
 			canvas.drawBitmap(scaledForegroundImage, 0, 0, paint);
+			
+			Paint paintScreenText = new Paint();
+			paintScreenText.setARGB(255, 0, 255, 0);
+	        paintScreenText.setTextSize(32);
+	        paintScreenText.setFakeBoldText(true); 	
+			
+			canvas.drawText(Float.toString(proximity), getWidth()/2, getHeight()/2, paintScreenText);
+			
 		}
 	}
 

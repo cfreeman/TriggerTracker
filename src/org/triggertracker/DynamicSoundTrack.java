@@ -73,6 +73,10 @@ public class DynamicSoundTrack {
             for (Track t : mAllTracks) {
                 t.updateLevel(loc.getLatitude(), loc.getLongitude());
             }        
+        } else {
+        	for (Track t : mAllTracks) {
+        		t.mute();
+        	}
         }
     }
 
@@ -133,6 +137,13 @@ public class DynamicSoundTrack {
             //System.err.println("Distance:" + distance[0] + ":" + volume);
 
             player.setVolume(volume, volume);
+        }
+        
+        /**
+         * Mutes the track.
+         */
+        public void mute(){
+        	player.setVolume(0, 0);
         }
 
         /**
