@@ -18,16 +18,7 @@
  */
 package org.triggertracker;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
-import org.yaml.snakeyaml.Yaml;
 
 import android.app.Service;
 import android.content.Context;
@@ -35,8 +26,8 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.AudioManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -46,132 +37,45 @@ public class TriggerService extends Service implements LocationListener {
 	private boolean isRunning = true;
 	private LocationManager lm;
 	private TrackerConfiguration config;
-		
+	private DynamicSoundTrack mDynamicST;
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		System.err.println("Starting Service");		
+		System.err.println("Starting Service");
 
 		//config = new TrackerConfiguration();
 		//config.loadFromYaml("/trackerConfig.yml");
 
 		//Enable the GPS - updating every second or if we move more than 1 meter.
 		lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, POLL_INTERVAL, 1.0f, this);		
+		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, POLL_INTERVAL, 1.0f, this);
+
+        // Scale volume percent by max volume.
+        AudioManager amanager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        int maxVolume = amanager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
+
+        mDynamicST = new DynamicSoundTrack(lm, maxVolume);
+        // local test.
+//        mDynamicST.addTrack("/CreepyKidParkLoop_v01MP3.mp3", -27.511259f, 153.035278f);
+//        mDynamicST.addTrack("/DeadTeacherZoneLoop_v01MP3.mp3", -27.512991f, 153.034958f);
+
+        // Urban Village
+        mDynamicST.addTrack("/CreepyKidParkLoop_v01MP3.mp3", -27.453684f, 153.012543f);
+        mDynamicST.addTrack("/DeadTeacherZoneLoop_v01MP3.mp3", -27.452522f, 153.015427f);
+        mDynamicST.addTrack("/HappyParkLoop_v01MP3.mp3", -27.454931f, 153.015015f);
+        mDynamicST.addTrack("/HustleBustleCityAtmosLoop_v01MP3.mp3", -27.453665f, 153.014282f);
+        mDynamicST.addTrack("/UrbanConstructionLoop_v01MP3.mp3", -27.453779f, 153.015640f);
+        mDynamicST.addTrack("/LaBoiteLiftTempLoop_v01MP3.mp3", -27.454552f, 153.013412f);
 
 		new Thread(new Runnable() {
 
-			/**
-			 * Helper method for creating GPS triggers.
-			 * @param lat The latitude that trips the trigger.
-			 * @param lon The longitude that trips the trigger.
-			 * @param actionToFire The action to fire when the trigger is tripped.
-			 * 
-			 * @return The constructed trigger.
-			 */
-			Trigger createGPSTrigger(float lat, float lon, Action actionToFire) {
-				return new GPSTrigger(lm, lat, lon, actionToFire);
-			}
-
-			Trigger createTimeTrigger(int minutes, Action actionToFire) {
-				return new TimeTrigger(minutes, actionToFire);
-			}
-
-			Trigger createDelayTrigger(long seconds, Action actionToFire) {
-				return new DelayedTrigger(seconds, actionToFire);
-			}
-
-			/**
-			 * Helper method for creating video playback actions.
-			 *
-			 * @param video The name of the video file to playback. 
-			 *
-			 * @return The constructed action.
-			 */
-			Action createVideoAction(String video) {
-				return new PlayVideoAction(getApplication(), getBaseContext(), video);
-			}
-
-			Action createAudioAction(String audio) {
-				return new PlayAudioAction(getApplication(), getBaseContext(), audio);
-			}
-
-			/**
-			 * Helper method for creating call back actions.
-			 * 
-			 * @param callBack The ID of the callback to trigger.
-			 * @param number The phone number to dial.
-			 *
-			 * @return The constructed action.
-			 */
-			Action createCallAction(String callBack, String number) {
-				return new CallBackAction(callBack, number);
-			}
-
-			public void run() {            	
+			public void run() {
 				Looper.prepare();
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 
-				// Path 1.
-				/*
-				ChainTrigger chain = new ChainTrigger(null);
-				chain.addTrigger(createDelayTrigger(440, createAudioAction("TimeTriggerdrop-sculp-overJulie.m4a")));
-				chain.addTrigger(createGPSTrigger(-27.47157563f, 153.018449843f, createVideoAction("Lamp.m4v")));
-				chain.addTrigger(createDelayTrigger(180, createAudioAction("Timetriggerlamp(billy).m4a")));				 
-				chain.addTrigger(createGPSTrigger(-27.47184812f, 153.01792010f, createAudioAction("stairs(Billy).m4a")));
-				chain.addTrigger(createDelayTrigger(180, createAudioAction("TimeTriggerstairs(lilly).m4a")));				
-				chain.addTrigger(createGPSTrigger(-27.47081530f, 153.01765859f, createVideoAction("Grassy.m4v")));
-				chain.addTrigger(createDelayTrigger(300, createAudioAction("TimeTriggerGrassy(Alice).m4a")));
-				triggers.add(chain);
-				*/
-
-				// Path 2.
-				/*
-				ChainTrigger chain = new ChainTrigger(null);
-				chain.addTrigger(createGPSTrigger(-27.47184752f, 153.01894940f, createVideoAction("sculpture.m4v")));
-				chain.addTrigger(createDelayTrigger(300, createAudioAction("TimeTriggerdrop-sculp-overJulie.m4a")));
-				chain.addTrigger(createGPSTrigger(-27.47157563f, 153.018449843f, createVideoAction("Lamp.m4v")));
-				chain.addTrigger(createDelayTrigger(180, createAudioAction("Timetriggerlamp(billy).m4a")));
-				chain.addTrigger(createGPSTrigger(-27.47184812f, 153.01792010f, createAudioAction("stairs(Billy).m4a")));
-				chain.addTrigger(createDelayTrigger(180, createAudioAction("TimeTriggerstairs(lilly).m4a")));
-				chain.addTrigger(createGPSTrigger(-27.47081530f, 153.01765859f, createVideoAction("Grassy.m4v")));
-				chain.addTrigger(createDelayTrigger(300, createAudioAction("TimeTriggerGrassy(Alice).m4a")));
-				triggers.add(chain);
-				*/
-
-				// Path 3.
-				/*
-				ChainTrigger chain = new ChainTrigger(null);
-				chain.addTrigger(createGPSTrigger(-27.47200876f, 153.01884547f, createVideoAction("Dropbox.m4v")));
-				chain.addTrigger(createDelayTrigger(300, createAudioAction("TimeTriggerdrop-sculp-overJulie.m4a")));
-				chain.addTrigger(createGPSTrigger(-27.47157563f, 153.018449843f, createVideoAction("Lamp.m4v")));
-				chain.addTrigger(createDelayTrigger(180, createAudioAction("Timetriggerlamp(billy).m4a")));
-				chain.addTrigger(createGPSTrigger(-27.47184812f, 153.01792010f, createAudioAction("stairs(Billy).m4a")));
-				chain.addTrigger(createDelayTrigger(180, createAudioAction("TimeTriggerstairs(lilly).m4a")));
-				chain.addTrigger(createGPSTrigger(-27.47081530f, 153.01765859f, createVideoAction("Grassy.m4v")));
-				chain.addTrigger(createDelayTrigger(300, createAudioAction("TimeTriggerGrassy(Alice).m4a")));
-				triggers.add(chain);
-				*/
-
-				// Path 4.
-				/*
-				ChainTrigger chain = new ChainTrigger(null);
-				chain.addTrigger(createGPSTrigger(-27.47166904f, 153.01829696f, createAudioAction("Cafe(ruth).m4a")));
-				chain.addTrigger(createDelayTrigger(118, createAudioAction("TimeTriggerCafe.m4a")));
-				chain.addTrigger(createGPSTrigger(-27.47081530f, 153.01765859f, createVideoAction("Grassy.m4v")));
-				chain.addTrigger(createGPSTrigger(-27.47139597f, 153.01881194f, createVideoAction("Mirror.m4v")));
-				chain.addTrigger(createGPSTrigger(-27.47200876f, 153.01884547f, createVideoAction("Dropbox.m4v")));
-				chain.addTrigger(createDelayTrigger(307, createAudioAction("Timetriggeroverpass-dropbox(alice).m4a")));
-				triggers.add(chain);
-				*/
-
-				// Path 5.
-				ChainTrigger chain = new ChainTrigger(null);
-				chain.addTrigger(createGPSTrigger(-27.47166904f, 153.01829696f, createAudioAction("Cafe(ruth).m4a")));
-				chain.addTrigger(createDelayTrigger(118, createAudioAction("TimeTriggerCafe.m4a")));
-				chain.addTrigger(createGPSTrigger(-27.47081530f, 153.01765859f, createVideoAction("Grassy.m4v")));
-				chain.addTrigger(createGPSTrigger(-27.47139597f, 153.01881194f, createVideoAction("Mirror.m4v")));
-				chain.addTrigger(createDelayTrigger(590, createAudioAction("Timetriggeroverpass-dropbox(alice).m4a")));
-				triggers.add(chain);
+				//ChainTrigger chain = new ChainTrigger(null);
+				//chain.addTrigger(new DelayedTrigger(10, new PlayAudioAction("/trackA.m4a")));
+				//triggers.add(chain);
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             	PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TeethTracker");
@@ -179,6 +83,9 @@ public class TriggerService extends Service implements LocationListener {
 				while (isRunning) {
 					// Prevent the device from going to sleep.
 	                wl.acquire();
+
+	                // Update the sound levels in the dynamic sound track.
+	                mDynamicST.updateLevels();
 
 					// For each registered trigger - see if it fires.
 					for (Trigger t : triggers) {
@@ -195,17 +102,20 @@ public class TriggerService extends Service implements LocationListener {
 
 				// All done, the device can now go to sleep.
 				wl.release();
+
+				// All done, turn the sound track off.
+				mDynamicST.shutdown();
 		  }
-		}).start();     
+		}).start();
 
 		return(START_NOT_STICKY);
 	}
-  
+
 	@Override
   	public void onDestroy() {
 	  isRunning = false;
   	}
-  
+
   	@Override
   	public IBinder onBind(Intent intent) {
   		return(null);
@@ -214,17 +124,16 @@ public class TriggerService extends Service implements LocationListener {
 	@Override
 	public void onLocationChanged(Location arg0) {
 	}
-	
+
 	@Override
 	public void onProviderDisabled(String arg0) {
 	}
-	
+
 	@Override
 	public void onProviderEnabled(String arg0) {
 	}
-	
+
 	@Override
 	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
 	}
-
 }

@@ -40,7 +40,7 @@ public class TriggerTrackerActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);        
+        super.onCreate(savedInstanceState);
 
         // Spawn the trigger service to run in the background, but only if it is not running.        
         if (!isTrackingServiceRunning()) {
