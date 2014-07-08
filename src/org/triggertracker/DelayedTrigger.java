@@ -21,7 +21,7 @@ package org.triggertracker;
 public class DelayedTrigger implements Trigger {
 
 	// Has this trigger gone off?
-	private boolean hasTriggered;
+	private boolean hasTriggered = false;
 
 	// The action to fire if the trigger has been tripped.
 	private Action action;
@@ -35,39 +35,29 @@ public class DelayedTrigger implements Trigger {
 	/**
 	 * Constructor.
 	 *
-	 * @param secondsToTrigger The number of seconds till the  
+	 * @param secondsToTrigger The number of seconds till the
 	 * @param actionToTrigger The action to trigger, when the time is the specified number
 	 * of minutes past the hour.
 	 */
 	public DelayedTrigger(long secondsToTrigger, Action actionToTrigger) {
 		seconds = secondsToTrigger;
 		action = actionToTrigger;
-		hasTriggered = false;
-	}
-
-	@Override
-	public void setAction(Action actionToTrigger) {
-		action = actionToTrigger;
-	}
-
-	@Override
-	public Action getAction() {
-		return action;
 	}
 
 	@Override
 	public void testFire() {
+		long currentTime = (System.currentTimeMillis() / 1000);
+
 		if (startTime == -1) {
-			startTime = (System.currentTimeMillis() / 1000); 
+			startTime = currentTime;
 		}
 
-		if (!hasTriggered) {
-			long currentTime = (System.currentTimeMillis() / 1000);	
-
-			if ((currentTime - startTime) > seconds) {
-				hasTriggered = true;
+		if (!hasTriggered && (currentTime - startTime) > seconds) {
+			if (action != null) {
 				action.trigger();
 			}
+
+			hasTriggered = true;
 		}
 	}
 

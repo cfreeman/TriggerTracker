@@ -25,13 +25,13 @@ public class GPSTrigger implements Trigger {
 
 	// The RADIUS to use around the specified coordinate, whenever we are near the location
 	// this trigger will trip.
-	private static final float RADIUS = 15.0f; 
+	private static final float RADIUS = 15.0f;
 
 	// The location manager that we fetch GPS coordinates from.
 	private LocationManager lm;
 
 	// Has this trigger gone off?
-	private boolean hasTriggered;
+	private boolean hasTriggered = false;
 
 	// The action to fire if the trigger has been tripped.
 	private Action action;
@@ -44,27 +44,16 @@ public class GPSTrigger implements Trigger {
 
 	public GPSTrigger(LocationManager locationManager, float latToTrigger, float lonToTrigger, Action actionToTrigger) {
 		lm = locationManager;
-		hasTriggered = false;
 		action = actionToTrigger;
 		lat = latToTrigger;
 		lon = lonToTrigger;
 	}
 
 	@Override
-	public void setAction(Action actionToTrigger) {
-		action = actionToTrigger;
-	}
-
-	@Override
-	public Action getAction() {
-		return action;
-	}
-
-	@Override
 	public void testFire() {
 		// We only trigger once.
 		if (!hasTriggered) {
-			Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER); 
+			Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 			float[] distance = new float[1];
 
 			if (loc != null) {
@@ -77,9 +66,12 @@ public class GPSTrigger implements Trigger {
 				//System.err.println("Testing Loc - [" + loc.getLatitude() + ", " + loc.getLongitude() + "] - " + distance[0]);
 
 				if (distance[0] < RADIUS) {
+					if (action != null) {
+						action.trigger();
+					}
+
 					hasTriggered = true;
 					//System.err.println("GPS Trigger Tripped [" + lat + ", " + lon + "] - " + distance[0]);
-					action.trigger();
 				}
 			}
 		}

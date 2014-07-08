@@ -19,9 +19,7 @@
 package org.triggertracker;
 
 public interface Trigger {
-	void setAction(Action actionToTrigger);
-	Action getAction();
-
 	void testFire();
+
 	boolean hasTriggered();
 }

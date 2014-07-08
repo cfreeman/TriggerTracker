@@ -23,7 +23,7 @@ import java.util.Calendar;
 public class TimeTrigger implements Trigger {
 
 	// Has this trigger gone off?
-	private boolean hasTriggered;
+	private boolean hasTriggered = false;
 
 	// The action to fire if the trigger has been tripped.
 	private Action action;
@@ -42,28 +42,19 @@ public class TimeTrigger implements Trigger {
 	public TimeTrigger(int minutesPastHour, Action actionToTrigger) {
 		minutes = minutesPastHour;
 		action = actionToTrigger;
-		hasTriggered = false;
-	}
-
-	@Override
-	public void setAction(Action actionToTrigger) {
-		action = actionToTrigger;
-	}
-
-	@Override
-	public Action getAction() {
-		return action;
 	}
 
 	@Override
 	public void testFire() {
-		if (!hasTriggered) {
-			Calendar cal = Calendar.getInstance();
-			if (cal.get(Calendar.MINUTE) >= minutes) {
-				System.err.println("Time Trigger Tripped [" + minutes + "]");
-				hasTriggered = true;
+		Calendar cal = Calendar.getInstance();
+
+		if (!hasTriggered && cal.get(Calendar.MINUTE) >= minutes) {
+			if (action != null) {
 				action.trigger();
-			}			
+			}
+
+			hasTriggered = true;
+			System.err.println("Time Trigger Tripped [" + minutes + "]");
 		}
 	}
 

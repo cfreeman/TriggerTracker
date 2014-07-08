@@ -29,18 +29,17 @@ public class ChainTrigger implements Trigger {
 	private int currentTrigger;
 
 	// Has this trigger gone off?
-	private boolean hasTriggered;
+	private boolean hasTriggered = false;
 
 	// The action to fire if the trigger has been tripped.
-	private Action action;	
+	private Action action;
 
-	/** 
+	/**
 	 * @param actionToTrigger The action to trigger once everything in the chain has triggered.
 	 */
 	public ChainTrigger(Action actionToTrigger) {
 		action = actionToTrigger;
 		chainOfTriggers = new ArrayList<Trigger>();
-		hasTriggered = false;
 		currentTrigger = 0;
 	}
 
@@ -53,23 +52,13 @@ public class ChainTrigger implements Trigger {
 	public void addTrigger(Trigger trigger) {
 		chainOfTriggers.add(trigger);
 	}
-	
-	@Override
-	public void setAction(Action actionToTrigger) {
-		action = actionToTrigger;
-	}
-
-	@Override
-	public Action getAction() {
-		return action;
-	}
 
 	@Override
 	public void testFire() {
 		if (!hasTriggered) {
 			Trigger activeTrigger = chainOfTriggers.get(currentTrigger);
 
-			// Move onto the next trigger in the chain if the 
+			// Move onto the next trigger in the chain if the
 			if (activeTrigger.hasTriggered()) {
 				currentTrigger++;
 			} else {
@@ -78,10 +67,11 @@ public class ChainTrigger implements Trigger {
 
 			// If we are the end of the chain - all done.
 			if (currentTrigger == chainOfTriggers.size()) {
-				hasTriggered = true;
 				if (action != null) {
 					action.trigger();
 				}
+
+				hasTriggered = true;
 			}
 		}
 	}
