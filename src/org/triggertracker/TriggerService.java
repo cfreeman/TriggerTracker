@@ -36,7 +36,7 @@ public class TriggerService extends Service implements LocationListener {
 	private static final int POLL_INTERVAL = 1000;
 	private boolean isRunning = true;
 	private LocationManager lm;
-	private TrackerConfiguration config;
+	//private TrackerConfiguration config;
 	private DynamicSoundTrack mDynamicST;
 
 	@Override
@@ -51,24 +51,23 @@ public class TriggerService extends Service implements LocationListener {
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, POLL_INTERVAL, 1.0f, this);
 
         // Scale volume percent by max volume.
-        AudioManager amanager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-        int maxVolume = amanager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
+  //      AudioManager amanager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+  //      int maxVolume = amanager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
 
-        mDynamicST = new DynamicSoundTrack(lm, maxVolume);
+//        mDynamicST = new DynamicSoundTrack(lm, maxVolume);
         // local test.
 //        mDynamicST.addTrack("/CreepyKidParkLoop_v01MP3.mp3", -27.511259f, 153.035278f);
 //        mDynamicST.addTrack("/DeadTeacherZoneLoop_v01MP3.mp3", -27.512991f, 153.034958f);
 
         // Urban Village
-        mDynamicST.addTrack("/CreepyKidParkLoop_v01MP3.mp3", -27.453684f, 153.012543f);
-        mDynamicST.addTrack("/DeadTeacherZoneLoop_v01MP3.mp3", -27.452522f, 153.015427f);
-        mDynamicST.addTrack("/HappyParkLoop_v01MP3.mp3", -27.454931f, 153.015015f);
-        mDynamicST.addTrack("/HustleBustleCityAtmosLoop_v01MP3.mp3", -27.453665f, 153.014282f);
-        mDynamicST.addTrack("/UrbanConstructionLoop_v01MP3.mp3", -27.453779f, 153.015640f);
-        mDynamicST.addTrack("/LaBoiteLiftTempLoop_v01MP3.mp3", -27.454552f, 153.013412f);
+//        mDynamicST.addTrack("/CreepyKidParkLoop_v01MP3.mp3", -27.453684f, 153.012543f);
+//        mDynamicST.addTrack("/DeadTeacherZoneLoop_v01MP3.mp3", -27.452522f, 153.015427f);
+//        mDynamicST.addTrack("/HappyParkLoop_v01MP3.mp3", -27.454931f, 153.015015f);
+//        mDynamicST.addTrack("/HustleBustleCityAtmosLoop_v01MP3.mp3", -27.453665f, 153.014282f);
+//        mDynamicST.addTrack("/UrbanConstructionLoop_v01MP3.mp3", -27.453779f, 153.015640f);
+//        mDynamicST.addTrack("/LaBoiteLiftTempLoop_v01MP3.mp3", -27.454552f, 153.013412f);
 
 		new Thread(new Runnable() {
-
 			public void run() {
 				Looper.prepare();
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
@@ -78,11 +77,13 @@ public class TriggerService extends Service implements LocationListener {
 				//triggers.add(chain);
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            	PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TeethTracker");
+
+				//TODO: Find replaceentn for SCREEN DIM WAKE LOCK
+				//PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TeethTracker");
 
 				while (isRunning) {
 					// Prevent the device from going to sleep.
-	                wl.acquire();
+	                // wl.acquire();
 
 	                // Update the sound levels in the dynamic sound track.
 	                mDynamicST.updateLevels();
@@ -101,7 +102,7 @@ public class TriggerService extends Service implements LocationListener {
 				}
 
 				// All done, the device can now go to sleep.
-				wl.release();
+				// wl.release();
 
 				// All done, turn the sound track off.
 				mDynamicST.shutdown();
