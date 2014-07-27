@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Clinton Freeman 2012
+ * Copyright (c) Clinton Freeman 2014
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -18,34 +18,9 @@
  */
 package org.triggertracker;
 
-import android.media.MediaPlayer;
-import android.os.Environment;
-
-public class PlayAudioAction implements Action {
-
+public interface TriggerLocation {
 	/**
-	 * Constructor
-	 *
-	 * @param audioFile The path to the audio file on the external file storage that you want this action to play.
+	 * Is the device at the nominated location?
 	 */
-	public PlayAudioAction(String audioFile) {
-		mAudioToTrigger = audioFile;
-	}
-
-	@Override
-	public void trigger() {
-		System.err.println("Triggering PlayAudio - " + mAudioToTrigger);
-
-		MediaPlayer mp = new MediaPlayer();
-        try {
-            mp.setDataSource(Environment.getExternalStorageDirectory() + mAudioToTrigger);
-            mp.prepare();
-            mp.start();
-
-        } catch (Exception e) {
-            System.err.println("Unable to play audio action: " + mAudioToTrigger);
-        }
-	}
-
-	private String mAudioToTrigger;
+	boolean at();
 }

@@ -23,16 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 
 public class PlayVideoAction implements Action {
-
-	// The parent application for this video playback action.
-	private Application parentApplication;
-
-	// The parent context for this video playback action.
-	private Context parentContext;
-
-	// The video to play back when the action is triggered.
-	private String videoToTrigger;
-
 	public PlayVideoAction(Application app, Context context, String videoName) {
 		parentApplication = app;
 		parentContext = context;
@@ -47,4 +37,8 @@ public class PlayVideoAction implements Action {
 		dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		parentApplication.startActivity(dialogIntent);
 	}
+
+	private Application parentApplication;
+	private Context parentContext;
+	private String videoToTrigger;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Clinton Freeman 2012
+ * Copyright (c) Clinton Freeman 2014
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -18,34 +18,34 @@
  */
 package org.triggertracker;
 
-import android.media.MediaPlayer;
-import android.os.Environment;
+import com.estimote.sdk.BeaconManager;
+import com.estimote.sdk.Beacon;
+import com.estimote.sdk.Region;
+import com.estimote.sdk.Utils;
 
-public class PlayAudioAction implements Action {
+import java.util.Hashtable;
+import java.util.List;
 
-	/**
-	 * Constructor
-	 *
-	 * @param audioFile The path to the audio file on the external file storage that you want this action to play.
-	 */
-	public PlayAudioAction(String audioFile) {
-		mAudioToTrigger = audioFile;
+public class EstimoteManager {
+	public EstimoteManager(BeaconManager locationManager) {
+		locationManager.setRangingListener(new BeaconManager.RangingListener() {
+			public void onBeaconsDiscovered(Region region, final List<Beacon> rangedBeacons) {
+				for (Beacon b : rangedBeacons) {
+					ranges.put(b.getMacAddress(), Utils.computeAccuracy(b));
+				}
+			}
+		});
 	}
 
-	@Override
-	public void trigger() {
-		System.err.println("Triggering PlayAudio - " + mAudioToTrigger);
+	public double getLastKnownDistance(String beaconAddress) {
+		Double d = ranges.get(beaconAddress);
 
-		MediaPlayer mp = new MediaPlayer();
-        try {
-            mp.setDataSource(Environment.getExternalStorageDirectory() + mAudioToTrigger);
-            mp.prepare();
-            mp.start();
-
-        } catch (Exception e) {
-            System.err.println("Unable to play audio action: " + mAudioToTrigger);
-        }
+		if (d == null) {
+			return Double.MAX_VALUE;
+		} else {
+			return d.doubleValue();
+		}
 	}
 
-	private String mAudioToTrigger;
+	private Hashtable<String, Double> ranges = new Hashtable<String, Double>();
 }

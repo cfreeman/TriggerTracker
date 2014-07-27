@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Clinton Freeman 2012
+ * Copyright (c) Clinton Freeman 2014
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -18,34 +18,30 @@
  */
 package org.triggertracker;
 
-import android.media.MediaPlayer;
-import android.os.Environment;
+import android.location.Location;
+import android.location.LocationManager;
 
-public class PlayAudioAction implements Action {
-
-	/**
-	 * Constructor
-	 *
-	 * @param audioFile The path to the audio file on the external file storage that you want this action to play.
-	 */
-	public PlayAudioAction(String audioFile) {
-		mAudioToTrigger = audioFile;
+public class GPSManager {
+	public GPSManager(LocationManager locationManager) {
+		lm = locationManager;
 	}
 
-	@Override
-	public void trigger() {
-		System.err.println("Triggering PlayAudio - " + mAudioToTrigger);
+	public double getLastKnownDistance(float lat, float lon) {
+		Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-		MediaPlayer mp = new MediaPlayer();
-        try {
-            mp.setDataSource(Environment.getExternalStorageDirectory() + mAudioToTrigger);
-            mp.prepare();
-            mp.start();
+		if (loc == null) {
+			return Double.MAX_VALUE;
+		} else {
+			float[] distance = new float[1];
+			Location.distanceBetween(loc.getLatitude(),
+										 loc.getLongitude(),
+										 lat,
+										 lon,
+										 distance);
 
-        } catch (Exception e) {
-            System.err.println("Unable to play audio action: " + mAudioToTrigger);
-        }
+			return (double) distance[0];
+		}
 	}
 
-	private String mAudioToTrigger;
+	private LocationManager lm;
 }

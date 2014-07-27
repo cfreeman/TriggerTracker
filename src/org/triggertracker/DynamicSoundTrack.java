@@ -34,13 +34,13 @@ public class DynamicSoundTrack {
      *
      * @param locMan The LocationManager that will provide position information for updating
      * the levels of the dynamic sound track. When people are close to the sources of tracks
-     * the sound levels will be louder, and when people are further away from the sources of 
+     * the sound levels will be louder, and when people are further away from the sources of
      * tracks, the sound levels will be lower.
-     * @param maxVolume The maximum volume permitted for the dynamic sound track. 
+     * @param maxVolume The maximum volume permitted for the dynamic sound track.
      */
-    public DynamicSoundTrack(LocationManager locMan, int maxVolume) {
-        mAllTracks = new ArrayList<Track>();        
-        mLocationManager = locMan;
+    public DynamicSoundTrack(GPSManager gpsMan, int maxVolume) {
+        mAllTracks = new ArrayList<Track>();
+        mGPSManager = gpsMan;
         mMaxVolume = maxVolume;
     }
 
@@ -67,12 +67,8 @@ public class DynamicSoundTrack {
      * than those further away.
      */
     public void updateLevels() {
-        Location loc = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER); 
-
-        if (loc != null) {
-            for (Track t : mAllTracks) {
-                t.updateLevel(loc.getLatitude(), loc.getLongitude());
-            }        
+        for (Track t : mAllTracks) {
+            t.updateLevel(mGPSManager);
         }
     }
 
@@ -94,12 +90,12 @@ public class DynamicSoundTrack {
 
         /**
          * Constructor.
-         * 
+         *
          * @param newTrack Path to the sound file in external storage that you want to loop
          * over for this track.
          * @param newLat The latitude of the source location for this track.
          * @param newLon The longitude of the source location for this track.
-         * 
+         *
          * @throws IllegalArgumentException If unable to create a track from the supplied file path.
          * @throws IllegalStateException If unable to create a track from the supplied file path.
          * @throws IOException If unable to create a track from the supplied file path.
@@ -117,20 +113,17 @@ public class DynamicSoundTrack {
         }
 
         /**
-         * Update the level for this track, 
-         * 
+         * Update the level for this track,
+         *
          * @param latitude The current latitude of the person holding the android device.
          * @param longitude The current longitude of the person holding the android device.
          */
-        public void updateLevel(double latitude, double longitude) {
-            float[] distance = new float[1];
-            Location.distanceBetween(latitude, longitude, lat, lon, distance);            
-
+        public void updateLevel(GPSManager gpsMan) {
             // Volume is the inverse of the distance. The closer to the desired location, the louder the track.
-            float volume = Math.max(0.0f, (MAX_DISTANCE - distance[0]));
+            float volume = Math.max(0.0f, (MAX_DISTANCE - (float) gpsMan.getLastKnownDistance(lat, lon)));
             volume = volume / MAX_DISTANCE;
             volume = volume * (float) mMaxVolume;
-            //System.err.println("Distance:" + distance[0] + ":" + volume);
+            //System.err.println("Distance:" + gpsMan.getLastKnownDistance(lat, lon) + ":" + volume);
 
             player.setVolume(volume, volume);
         }
@@ -139,12 +132,12 @@ public class DynamicSoundTrack {
          * Stop the track from playing.
          */
         public void stop() {
-            player.stop();            
+            player.stop();
         }
     }
 
     private List<Track> mAllTracks;
     private int mMaxVolume;
-    private LocationManager mLocationManager;
+    private GPSManager mGPSManager;
     private static float MAX_DISTANCE = 150.0f;
 }

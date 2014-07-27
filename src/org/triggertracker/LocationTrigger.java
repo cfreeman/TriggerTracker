@@ -18,34 +18,34 @@
  */
 package org.triggertracker;
 
-import android.media.MediaPlayer;
-import android.os.Environment;
 
-public class PlayAudioAction implements Action {
+public class LocationTrigger implements Trigger {
 
-	/**
-	 * Constructor
-	 *
-	 * @param audioFile The path to the audio file on the external file storage that you want this action to play.
-	 */
-	public PlayAudioAction(String audioFile) {
-		mAudioToTrigger = audioFile;
+	public LocationTrigger(TriggerLocation triggerLocation, Action actionToTrigger) {
+		location = triggerLocation;
+		action = actionToTrigger;
 	}
 
 	@Override
-	public void trigger() {
-		System.err.println("Triggering PlayAudio - " + mAudioToTrigger);
+	public void testFire() {
+		// We only trigger once.
+		if (!hasTriggered) {
+			if (location.at()) {
+				if (action != null) {
+					action.trigger();
+				}
 
-		MediaPlayer mp = new MediaPlayer();
-        try {
-            mp.setDataSource(Environment.getExternalStorageDirectory() + mAudioToTrigger);
-            mp.prepare();
-            mp.start();
-
-        } catch (Exception e) {
-            System.err.println("Unable to play audio action: " + mAudioToTrigger);
-        }
+				hasTriggered = true;
+			}
+		}
 	}
 
-	private String mAudioToTrigger;
+	@Override
+	public boolean hasTriggered() {
+		return hasTriggered;
+	}
+
+	private boolean hasTriggered = false;		// Has this trigger gone off?
+	private TriggerLocation location;			// The desired location to trip the trigger.
+	private Action action;						// The action to fire if the trigger has been tripped.
 }
