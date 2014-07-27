@@ -32,30 +32,23 @@ public class DynamicSoundTrack {
     /**
      * Constructor.
      *
-     * @param locMan The LocationManager that will provide position information for updating
-     * the levels of the dynamic sound track. When people are close to the sources of tracks
-     * the sound levels will be louder, and when people are further away from the sources of
-     * tracks, the sound levels will be lower.
      * @param maxVolume The maximum volume permitted for the dynamic sound track.
      */
-    public DynamicSoundTrack(GPSManager gpsMan, int maxVolume) {
+    public DynamicSoundTrack(int maxVolume) {
         mAllTracks = new ArrayList<Track>();
-        mGPSManager = gpsMan;
-        mMaxVolume = maxVolume;
+        mMaxVolume = (float) maxVolume;
     }
 
     /**
      * Adds a new track to the dynamic sound track.
      *
      * @param track Path to audio file on the external storage.
-     * @param lat The latitude of the sound source, the closer you are to the source location
-     * the louder this track will be.
-     * @param lon The longitude of the sound source, the closer you are to the source location
+     * @param location The location of the sound source, the closer you are to the source location
      * the louder this track will be.
      */
-    public void addTrack(final String track, float lat, float lon) {
+    public void addTrack(final String track, final TriggerLocation location) {
         try {
-            mAllTracks.add(new Track(track, lat, lon));
+            mAllTracks.add(new Track(track, location));
         } catch (Exception e) {
             System.err.println("Unable to add: '" + track + "' to dynamic sound track.");
         }
@@ -68,7 +61,7 @@ public class DynamicSoundTrack {
      */
     public void updateLevels() {
         for (Track t : mAllTracks) {
-            t.updateLevel(mGPSManager);
+            t.updateLevel();
         }
     }
 
@@ -85,31 +78,29 @@ public class DynamicSoundTrack {
      * A Track held within the DynamicSoundTrack.
      */
     private class Track {
-        private MediaPlayer player;
-        private float lat, lon;
+        private MediaPlayer mPlayer;
+        private TriggerLocation mLocation;
 
         /**
          * Constructor.
          *
          * @param newTrack Path to the sound file in external storage that you want to loop
          * over for this track.
-         * @param newLat The latitude of the source location for this track.
-         * @param newLon The longitude of the source location for this track.
+         * @param location The source location for this track.
          *
          * @throws IllegalArgumentException If unable to create a track from the supplied file path.
          * @throws IllegalStateException If unable to create a track from the supplied file path.
          * @throws IOException If unable to create a track from the supplied file path.
          */
-        Track(final String newTrack, float newLat, float newLon)
+        Track(final String newTrack, final TriggerLocation location)
         throws IllegalArgumentException, IllegalStateException, IOException {
-            lat = newLat;
-            lon = newLon;
+            mLocation = location;
 
-            player = new MediaPlayer();
-            player.setDataSource(Environment.getExternalStorageDirectory() + newTrack);
-            player.prepare();
-            player.setLooping(true);
-            player.start();
+            mPlayer = new MediaPlayer();
+            mPlayer.setDataSource(Environment.getExternalStorageDirectory() + newTrack);
+            mPlayer.prepare();
+            mPlayer.setLooping(true);
+            mPlayer.start();
         }
 
         /**
@@ -118,11 +109,11 @@ public class DynamicSoundTrack {
          * @param latitude The current latitude of the person holding the android device.
          * @param longitude The current longitude of the person holding the android device.
          */
-        public void updateLevel(GPSManager gpsMan) {
+        public void updateLevel() {
             // Volume is the inverse of the distance. The closer to the desired location, the louder the track.
-            float volume = Math.max(0.0f, (MAX_DISTANCE - (float) gpsMan.getLastKnownDistance(lat, lon)));
+            float volume = Math.max(0.0f, (MAX_DISTANCE - mLocation.distance()));
             volume = volume / MAX_DISTANCE;
-            volume = volume * (float) mMaxVolume;
+            volume = volume * mMaxVolume;
             //System.err.println("Distance:" + gpsMan.getLastKnownDistance(lat, lon) + ":" + volume);
 
             player.setVolume(volume, volume);
@@ -137,7 +128,7 @@ public class DynamicSoundTrack {
     }
 
     private List<Track> mAllTracks;
-    private int mMaxVolume;
+    private float mMaxVolume;
     private GPSManager mGPSManager;
     private static float MAX_DISTANCE = 150.0f;
 }

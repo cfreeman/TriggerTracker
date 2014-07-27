@@ -20,19 +20,17 @@ package org.triggertracker;
 
 public class EstimoteLocation implements TriggerLocation {
 
-	/**
-	 * Constructor.
-	 */
 	public void EstimoteLocation(EstimoteManager estimoteManager, String beaconAddress) {
 		em = estimoteManager;
 		address = beaconAddress;
 	}
 
-	/**
-	 * Is the device at the nominated location?
-	 */
 	public boolean at() {
 		return (em.getLastKnownDistance(address) < RADIUS);
+	}
+
+	public float distance() {
+		return (float) em.getLastKnownDistance(address);
 	}
 
 	private EstimoteManager em;

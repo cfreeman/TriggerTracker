@@ -23,4 +23,9 @@ public interface TriggerLocation {
 	 * Is the device at the nominated location?
 	 */
 	boolean at();
+
+	/**
+	 * The distance to the trigger location
+	 */
+	float distance();
 }

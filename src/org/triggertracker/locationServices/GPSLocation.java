@@ -20,24 +20,22 @@ package org.triggertracker;
 
 public class GPSLocation implements TriggerLocation {
 
-	/**
-	 * Constructor.
-	 */
 	public void GPSLocation(GPSManager gpsManager, float latitude, float longitude) {
 		gm = gpsManager;
 		lat = latitude;
 		lon = longitude;
 	}
 
-	/**
-	 * Is the device at the nominated location?
-	 */
 	public boolean at() {
 		return (gm.getLastKnownDistance(lat, lon) < RADIUS);
+	}
+
+	public float distance() {
+		return (float) gm.getLastKnownDistance(lat, lon);
 	}
 
 	private GPSManager gm;
 	private float lat;
 	private float lon;
-	private static final float RADIUS = 15.0f;
+	private static final double RADIUS = 15.0f;
 }
