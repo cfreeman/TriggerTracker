@@ -25,35 +25,35 @@ import android.content.Intent;
 import android.os.Bundle;
 
 public class TriggerTrackerActivity extends Activity {
-	/**
-	 * @return True if the trigger service is already running, false otherwise. 
-	 */
-	private boolean isTrackingServiceRunning() {
-	    ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-	        if ("org.triggertracker.TriggerService".equals(service.service.getClassName())) {
-	            return true;
-	        }
-	    }
-	    return false;
-	}
+    /**
+     * @return True if the trigger service is already running, false otherwise.
+     */
+    private boolean isTrackingServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if ("org.triggertracker.TriggerService".equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Spawn the trigger service to run in the background, but only if it is not running.        
+        // Spawn the trigger service to run in the background, but only if it is not running.
         if (!isTrackingServiceRunning()) {
-        	System.err.println("Spining up service");
-        	Intent i= new Intent(this, TriggerService.class);
-        	startService(i);
+            System.err.println("Spining up service");
+            Intent i = new Intent(this, TriggerService.class);
+            startService(i);
         }
 
-    	setContentView(R.layout.main);
+        setContentView(R.layout.main);
     }
 
     @Override
     public void onDestroy() {
-    	super.onDestroy();
+        super.onDestroy();
     }
 }

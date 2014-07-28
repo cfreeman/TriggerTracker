@@ -27,6 +27,8 @@ import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.Environment;
 
+import org.triggertracker.locationservices.TriggerLocation;
+
 public class DynamicSoundTrack {
 
     /**
@@ -114,21 +116,19 @@ public class DynamicSoundTrack {
             float volume = Math.max(0.0f, (MAX_DISTANCE - mLocation.distance()));
             volume = volume / MAX_DISTANCE;
             volume = volume * mMaxVolume;
-            //System.err.println("Distance:" + gpsMan.getLastKnownDistance(lat, lon) + ":" + volume);
 
-            player.setVolume(volume, volume);
+            mPlayer.setVolume(volume, volume);
         }
 
         /**
          * Stop the track from playing.
          */
         public void stop() {
-            player.stop();
+            mPlayer.stop();
         }
     }
 
     private List<Track> mAllTracks;
     private float mMaxVolume;
-    private GPSManager mGPSManager;
-    private static float MAX_DISTANCE = 150.0f;
+    private static float MAX_DISTANCE = 15.0f;
 }

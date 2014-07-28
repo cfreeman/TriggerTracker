@@ -18,6 +18,7 @@
  */
 package org.triggertracker;
 
+import org.triggertracker.locationservices.TriggerLocation;
 
 public class LocationTrigger implements Trigger {
 

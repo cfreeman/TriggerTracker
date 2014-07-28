@@ -31,31 +31,71 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
+import android.os.RemoteException;
+import android.util.Log;
+import android.widget.Toast;
+import com.estimote.sdk.Region;
+import com.estimote.sdk.BeaconManager;
+
+import org.triggertracker.locationservices.EstimoteLocation;
+import org.triggertracker.locationservices.EstimoteManager;
+import org.triggertracker.locationservices.TriggerLocation;
 
 public class TriggerService extends Service implements LocationListener {
+	private static final String TAG = TriggerService.class.getSimpleName();
+	private static final Region ALL_ESTIMOTE_BEACONS_REGION = new Region("rid", null, null, null);
 	private static final int POLL_INTERVAL = 1000;
-	private boolean isRunning = true;
-	private LocationManager lm;
-	//private TrackerConfiguration config;
+
+	private LocationManager mLocationManager;
+	private BeaconManager mBeaconManager;
+	private EstimoteManager mEstimoteManager;
+
+	private boolean mIsRunning = true;
 	private DynamicSoundTrack mDynamicST;
+
+	//private TrackerConfiguration config;
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		System.err.println("Starting Service");
+		super.onStartCommand(intent, flags, startId);
+
+		final Context text = this;
+
+
+		// Enable the low power bluetooth locatiion service.
+		mBeaconManager = new BeaconManager(this);
+		mBeaconManager.connect(new BeaconManager.ServiceReadyCallback() {
+			@Override
+			public void onServiceReady() {
+				try {
+					mBeaconManager.setForegroundScanPeriod(POLL_INTERVAL, POLL_INTERVAL * 5);
+					mBeaconManager.startRanging(ALL_ESTIMOTE_BEACONS_REGION);
+				} catch (RemoteException e) {
+					Log.e(TAG, "Cannot start ranging", e);
+				}
+			}
+		});
+
+		// Enable the GPS - updating every second or if we move more than 1 meter.
+		mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+		mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, POLL_INTERVAL, 1.0f, this);
+
+
+		mEstimoteManager = new EstimoteManager(mBeaconManager);
 
 		//config = new TrackerConfiguration();
 		//config.loadFromYaml("/trackerConfig.yml");
 
-		//Enable the GPS - updating every second or if we move more than 1 meter.
-		lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, POLL_INTERVAL, 1.0f, this);
-
         // Scale volume percent by max volume.
-  //      AudioManager amanager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-  //      int maxVolume = amanager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
+		AudioManager aManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+		int maxVolume = aManager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
 
-//        mDynamicST = new DynamicSoundTrack(lm, maxVolume);
-        // local test.
+		mDynamicST = new DynamicSoundTrack(maxVolume);
+
+		final TriggerLocation loc = new EstimoteLocation(mEstimoteManager, "CC:4A:11:09:A2:C3");
+		mDynamicST.addTrack("/QPAC_LaMer_Test.mp3", loc);
+
+
 //        mDynamicST.addTrack("/CreepyKidParkLoop_v01MP3.mp3", -27.511259f, 153.035278f);
 //        mDynamicST.addTrack("/DeadTeacherZoneLoop_v01MP3.mp3", -27.512991f, 153.034958f);
 
@@ -72,21 +112,20 @@ public class TriggerService extends Service implements LocationListener {
 				Looper.prepare();
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 
-				//ChainTrigger chain = new ChainTrigger(null);
-				//chain.addTrigger(new DelayedTrigger(10, new PlayAudioAction("/trackA.m4a")));
-				//triggers.add(chain);
+				ChainTrigger chain = new ChainTrigger(null);
+				chain.addTrigger(new DelayedTrigger(10, new PlayAudioAction("/QPAC_LaMer_Test.mp3")));
+				triggers.add(chain);
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+				PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "TriggerTracker");
 
-				//TODO: Find replaceentn for SCREEN DIM WAKE LOCK
-				//PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TeethTracker");
-
-				while (isRunning) {
+				while (mIsRunning) {
 					// Prevent the device from going to sleep.
-	                // wl.acquire();
+	                wl.acquire();
 
 	                // Update the sound levels in the dynamic sound track.
 	                mDynamicST.updateLevels();
+	                Toast.makeText(text, Float.toString(loc.distance()), Toast.LENGTH_SHORT).show();
 
 					// For each registered trigger - see if it fires.
 					for (Trigger t : triggers) {
@@ -102,7 +141,7 @@ public class TriggerService extends Service implements LocationListener {
 				}
 
 				// All done, the device can now go to sleep.
-				// wl.release();
+				wl.release();
 
 				// All done, turn the sound track off.
 				mDynamicST.shutdown();
@@ -114,7 +153,14 @@ public class TriggerService extends Service implements LocationListener {
 
 	@Override
   	public void onDestroy() {
-	  isRunning = false;
+		try {
+			mBeaconManager.stopRanging(ALL_ESTIMOTE_BEACONS_REGION);
+		} catch (RemoteException e) {
+			Log.d(TAG, "Error while stopping ranging", e);
+		}
+
+		mIsRunning = false;
+		super.onDestroy();
   	}
 
   	@Override
