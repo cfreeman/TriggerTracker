@@ -87,14 +87,14 @@ public class TriggerService extends Service implements LocationListener {
 		//config.loadFromYaml("/trackerConfig.yml");
 
         // Scale volume percent by max volume.
-		AudioManager aManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-		int maxVolume = aManager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
+		// AudioManager aManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+		// int maxVolume = aManager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
 
-		mDynamicST = new DynamicSoundTrack(maxVolume);
+//		System.err.println("****maxVolume:" + maxVolume);
+		mDynamicST = new DynamicSoundTrack(1.0f);
 
 		final TriggerLocation loc = new EstimoteLocation(mEstimoteManager, "CC:4A:11:09:A2:C3");
 		mDynamicST.addTrack("/QPAC_LaMer_Test.mp3", loc);
-
 
 //        mDynamicST.addTrack("/CreepyKidParkLoop_v01MP3.mp3", -27.511259f, 153.035278f);
 //        mDynamicST.addTrack("/DeadTeacherZoneLoop_v01MP3.mp3", -27.512991f, 153.034958f);
@@ -113,7 +113,8 @@ public class TriggerService extends Service implements LocationListener {
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 
 				ChainTrigger chain = new ChainTrigger(null);
-				chain.addTrigger(new DelayedTrigger(10, new PlayAudioAction("/QPAC_LaMer_Test.mp3")));
+				//chain.addTrigger(new LocationTrigger(loc, new PlayAudioAction("/QPAC_LaMer_Test.mp3")));
+				chain.addTrigger(new DelayedTrigger(600, new PlayAudioAction("/QPAC_LaMer_Test.mp3")));
 				triggers.add(chain);
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);

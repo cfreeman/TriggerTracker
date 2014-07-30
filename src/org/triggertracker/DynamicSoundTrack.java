@@ -33,12 +33,10 @@ public class DynamicSoundTrack {
 
     /**
      * Constructor.
-     *
-     * @param maxVolume The maximum volume permitted for the dynamic sound track.
      */
-    public DynamicSoundTrack(int maxVolume) {
+    public DynamicSoundTrack(float maxVolume) {
         mAllTracks = new ArrayList<Track>();
-        mMaxVolume = (float) maxVolume;
+        mMaxVolume = maxVolume;
     }
 
     /**
@@ -112,12 +110,25 @@ public class DynamicSoundTrack {
          * @param longitude The current longitude of the person holding the android device.
          */
         public void updateLevel() {
-            // Volume is the inverse of the distance. The closer to the desired location, the louder the track.
-            float volume = Math.max(0.0f, (MAX_DISTANCE - mLocation.distance()));
-            volume = volume / MAX_DISTANCE;
-            volume = volume * mMaxVolume;
+            // Volume is the inverse of the distance. The closer to the desired
+            // location, the louder the track.
+            float targetVolume = mLocation.distance() / MAX_DISTANCE;
+            targetVolume = targetVolume * mMaxVolume;
+            targetVolume = (float) -Math.log10(targetVolume);
 
-            mPlayer.setVolume(volume, volume);
+            if (targetVolume < 0.0f) {
+                targetVolume = 0.0f;
+            }
+
+            if (targetVolume > 1.0f) {
+                targetVolume = 1.0f;
+            }
+
+            float deltaV = (targetVolume - mCurrentVolume) / INTERPOLATE_STEPS;
+            mCurrentVolume = mCurrentVolume + deltaV;
+
+            //System.err.println("******D:" + mLocation.distance() + ":" + targetVolume + "=" + mCurrentVolume + "+" + deltaV);
+            mPlayer.setVolume(mCurrentVolume, mCurrentVolume);
         }
 
         /**
@@ -130,5 +141,7 @@ public class DynamicSoundTrack {
 
     private List<Track> mAllTracks;
     private float mMaxVolume;
+    private float mCurrentVolume = 0.0f;
     private static float MAX_DISTANCE = 15.0f;
+    private static float INTERPOLATE_STEPS = 10.0f;
 }
