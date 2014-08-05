@@ -113,8 +113,7 @@ public class TriggerService extends Service implements LocationListener {
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 
 				ChainTrigger chain = new ChainTrigger(null);
-				//chain.addTrigger(new LocationTrigger(loc, new PlayAudioAction("/QPAC_LaMer_Test.mp3")));
-				chain.addTrigger(new DelayedTrigger(600, new PlayAudioAction("/QPAC_LaMer_Test.mp3")));
+				chain.addTrigger(new LocationTrigger(loc, new PlayAudioAction("/12m-monkeybusiness.wav")));
 				triggers.add(chain);
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);

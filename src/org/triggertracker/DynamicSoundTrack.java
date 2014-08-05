@@ -125,7 +125,12 @@ public class DynamicSoundTrack {
             }
 
             float deltaV = (targetVolume - mCurrentVolume) / INTERPOLATE_STEPS;
-            mCurrentVolume = mCurrentVolume + deltaV;
+
+            //if (deltaV < MIN_STEP_SIZE) {
+            //    mCurrentVolume = targetVolume;
+            //} else {
+                mCurrentVolume = mCurrentVolume + deltaV;
+            //}
 
             //System.err.println("******D:" + mLocation.distance() + ":" + targetVolume + "=" + mCurrentVolume + "+" + deltaV);
             mPlayer.setVolume(mCurrentVolume, mCurrentVolume);
@@ -144,4 +149,5 @@ public class DynamicSoundTrack {
     private float mCurrentVolume = 0.0f;
     private static float MAX_DISTANCE = 15.0f;
     private static float INTERPOLATE_STEPS = 10.0f;
+    private static float MIN_STEP_SIZE = 0.02f;
 }
