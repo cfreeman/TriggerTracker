@@ -5,7 +5,7 @@
     android:layout_height="fill_parent"
     >
 <ImageView
-   android:id="@+id/test_image"
+   android:id="@+id/splash"
    android:src="@drawable/splash"
    android:layout_width="fill_parent"
    android:layout_height="fill_parent"
