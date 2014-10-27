@@ -10,8 +10,6 @@ An android application that can be configured for use in locative performances.
 * [http://reprage.com/post/alice/](http://reprage.com/post/alice/)
 * [http://reprage.com/post/kansas/](http://reprage.com/post/kansas/)
 
-Special thanks to [The Edge](http://edgeqld.org.au/), Daniel Flood and [Sandra Carluccio](http://sandracarluccio.net/), who have all supported the development of TriggerTracker.
-
 ## Building and Installing
 
 	ant debug
@@ -20,3 +18,5 @@ Special thanks to [The Edge](http://edgeqld.org.au/), Daniel Flood and [Sandra C
 ## Connecting for Debug
 
 	adb logcat *:W
+
+Special thanks to [The Edge](http://edgeqld.org.au/), Daniel Flood and [Sandra Carluccio](http://sandracarluccio.net/), who have all supported the development of TriggerTracker.
