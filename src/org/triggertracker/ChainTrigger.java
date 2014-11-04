@@ -74,8 +74,17 @@ public class ChainTrigger implements Trigger {
 				hasTriggered = true;
 			}
 		}
+	}
 
-		action.update();
+	@Override
+	public void update() {
+		for (Trigger t : chainOfTriggers) {
+			t.update();
+		}
+
+		if (action != null) {
+			action.update();
+		}
 	}
 
 	@Override

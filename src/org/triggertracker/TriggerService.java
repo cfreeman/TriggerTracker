@@ -55,7 +55,6 @@ public class TriggerService extends Service implements LocationListener {
 	private EstimoteManager mEstimoteManager;
 
 	private boolean mIsRunning = true;
-	private DynamicSoundTrack mDynamicST;
 
 	//private TrackerConfiguration config;
 
@@ -102,23 +101,6 @@ public class TriggerService extends Service implements LocationListener {
         // Scale volume percent by max volume.
 		// AudioManager aManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 		// int maxVolume = aManager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
-
-//		System.err.println("****maxVolume:" + maxVolume);
-//		mDynamicST = new DynamicSoundTrack(1.0f);
-
-//		final TriggerLocation loc = new EstimoteLocation(mEstimoteManager, "CC:4A:11:09:A2:C3");
-//		mDynamicST.addTrack("/QPAC_LaMer_Test.mp3", loc);
-
-//        mDynamicST.addTrack("/CreepyKidParkLoop_v01MP3.mp3", -27.511259f, 153.035278f);
-//        mDynamicST.addTrack("/DeadTeacherZoneLoop_v01MP3.mp3", -27.512991f, 153.034958f);
-
-        // Urban Village
-//        mDynamicST.addTrack("/CreepyKidParkLoop_v01MP3.mp3", -27.453684f, 153.012543f);
-//        mDynamicST.addTrack("/DeadTeacherZoneLoop_v01MP3.mp3", -27.452522f, 153.015427f);
-//        mDynamicST.addTrack("/HappyParkLoop_v01MP3.mp3", -27.454931f, 153.015015f);
-//        mDynamicST.addTrack("/HustleBustleCityAtmosLoop_v01MP3.mp3", -27.453665f, 153.014282f);
-//        mDynamicST.addTrack("/UrbanConstructionLoop_v01MP3.mp3", -27.453779f, 153.015640f);
-//        mDynamicST.addTrack("/LaBoiteLiftTempLoop_v01MP3.mp3", -27.454552f, 153.013412f);
 
 		new Thread(new Runnable() {
 			public void run() {
@@ -171,13 +153,13 @@ public class TriggerService extends Service implements LocationListener {
 					// Prevent the device from going to sleep.
 	                wl.acquire();
 
-	                // Update the sound levels in the dynamic sound track.
-	                //mDynamicST.updateLevels();
-	                // Toast.makeText(text, Float.toString(loc.distance()), Toast.LENGTH_SHORT).show();
-
 					// For each registered trigger - see if it fires.
 					for (Trigger t : triggers) {
 						t.testFire();
+					}
+
+					for (Trigger t : triggers) {
+						t.update();
 					}
 
 					try {
@@ -190,9 +172,6 @@ public class TriggerService extends Service implements LocationListener {
 
 				// All done, the device can now go to sleep.
 				wl.release();
-
-				// All done, turn the sound track off.
-				//mDynamicST.shutdown();
 		  }
 		}).start();
 

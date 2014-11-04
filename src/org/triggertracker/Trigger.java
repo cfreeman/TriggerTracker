@@ -20,6 +20,7 @@ package org.triggertracker;
 
 public interface Trigger {
 	void testFire();
+	void update();
 
 	boolean hasTriggered();
 }

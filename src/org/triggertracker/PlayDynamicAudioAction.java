@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Clinton Freeman 2012
+ * Copyright (c) Clinton Freeman 2014
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -70,13 +70,13 @@ public class PlayDynamicAudioAction implements Action {
 
         float deltaV = (targetVolume - mCurrentVolume) / INTERPOLATE_STEPS;
 
-        if (deltaV < MIN_STEP_SIZE) {
+        if (Math.abs(deltaV) < MIN_STEP_SIZE) {
            mCurrentVolume = targetVolume;
         } else {
             mCurrentVolume = mCurrentVolume + deltaV;
         }
 
-        //System.err.println("******D:" + mLocation.distance() + ":" + targetVolume + "=" + mCurrentVolume + "+" + deltaV);
+        System.err.println("******D:" + mAudioLocation.distance() + ":" + targetVolume + "=" + mCurrentVolume + "+" + deltaV);
         mPlayer.setVolume(mCurrentVolume, mCurrentVolume);
 	}
 
@@ -86,6 +86,6 @@ public class PlayDynamicAudioAction implements Action {
 	private float mCurrentVolume = 0.0f;
 	private static float MAX_DISTANCE = 15.0f;
 	private static float INTERPOLATE_STEPS = 10.0f;
-	private static float MIN_STEP_SIZE = 0.02f;
+	private static float MIN_STEP_SIZE = 0.002f;
 	private String mAudioToTrigger;
 }

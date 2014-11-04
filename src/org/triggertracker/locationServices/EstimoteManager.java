@@ -24,14 +24,29 @@ import com.estimote.sdk.Region;
 import com.estimote.sdk.Utils;
 
 import java.util.Hashtable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class EstimoteManager {
 	public EstimoteManager(BeaconManager locationManager) {
 		locationManager.setRangingListener(new BeaconManager.RangingListener() {
 			public void onBeaconsDiscovered(Region region, final List<Beacon> rangedBeacons) {
 				for (Beacon b : rangedBeacons) {
-					ranges.put(b.getMacAddress(), Utils.computeAccuracy(b));
+					mRanges.put(b.getMacAddress(), Utils.computeAccuracy(b));
+				}
+
+				// For beacons that are out of range we need to max out the distance again.
+				Set<String> lostBeacons = new HashSet(mRanges.keySet());
+
+				// Everything in the current range is not lost.
+				for (Beacon b : rangedBeacons) {
+					lostBeacons.remove(b.getMacAddress());
+				}
+
+				// Keep moving half a metre away from beacons that are out of range or lost.
+				for (String b : lostBeacons) {
+					mRanges.put(b, mRanges.get(b) + 0.5);
 				}
 			}
 		});
@@ -39,7 +54,7 @@ public class EstimoteManager {
 
 	public double getLastKnownDistance(String beaconAddress) {
 		try {
-			Double d = ranges.get(beaconAddress);
+			Double d = mRanges.get(beaconAddress);
 
 			if (d == null) {
 				return Double.MAX_VALUE;
@@ -51,5 +66,5 @@ public class EstimoteManager {
 		}
 	}
 
-	private Hashtable<String, Double> ranges = new Hashtable<String, Double>();
+	private Hashtable<String, Double> mRanges = new Hashtable<String, Double>();
 }
