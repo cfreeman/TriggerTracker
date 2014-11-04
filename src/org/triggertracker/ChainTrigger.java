@@ -74,6 +74,8 @@ public class ChainTrigger implements Trigger {
 				hasTriggered = true;
 			}
 		}
+
+		action.update();
 	}
 
 	@Override

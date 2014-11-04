@@ -33,7 +33,10 @@ public class DynamicSoundTrack {
 
     /**
      * Constructor.
+     *
+     * @Deprecated Can now be achived with a PlayDynamicAudio instead.
      */
+    @Deprecated
     public DynamicSoundTrack(float maxVolume) {
         mAllTracks = new ArrayList<Track>();
         mMaxVolume = maxVolume;
@@ -46,6 +49,7 @@ public class DynamicSoundTrack {
      * @param location The location of the sound source, the closer you are to the source location
      * the louder this track will be.
      */
+    @Deprecated
     public void addTrack(final String track, final TriggerLocation location) {
         try {
             mAllTracks.add(new Track(track, location));
@@ -59,6 +63,7 @@ public class DynamicSoundTrack {
      * reported by the GPS unit, make tracks closer to the current GPS location louder
      * than those further away.
      */
+    @Deprecated
     public void updateLevels() {
         for (Track t : mAllTracks) {
             t.updateLevel();
@@ -68,6 +73,7 @@ public class DynamicSoundTrack {
     /**
      * Stops all tracks.
      */
+    @Deprecated
     public void shutdown() {
         for (Track t : mAllTracks) {
             t.stop();

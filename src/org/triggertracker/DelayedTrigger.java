@@ -59,6 +59,8 @@ public class DelayedTrigger implements Trigger {
 
 			hasTriggered = true;
 		}
+
+		action.update();
 	}
 
 	@Override

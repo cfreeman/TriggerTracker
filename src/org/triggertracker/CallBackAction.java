@@ -38,7 +38,7 @@ public class CallBackAction implements Action {
 
 	@Override
 	public void trigger() {
-		try {			
+		try {
 			System.err.println("Triggering CallBack - " + number + " : " + callBackID);
 			URL centralTracker = new URL("http://teethtracker.heroku.com/device_movements/new?type=arrival&node=" + callBackID + "&number=" + number + "&v=2");
 			URLConnection trackerConnection = centralTracker.openConnection();
@@ -49,6 +49,10 @@ public class CallBackAction implements Action {
 		} catch (IOException e) {
 			System.err.println("io exception: " + e);
 		}
-		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void update() {
+		return;	// Nothing needs updating in this action.
 	}
 }

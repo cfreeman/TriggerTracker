@@ -23,4 +23,9 @@ public interface Action {
 	 * Perform this action (trigger it).
 	 */
 	void trigger();
+
+	/**
+	 * Update this action
+	 */
+	void update();
 }

@@ -21,26 +21,31 @@ package org.triggertracker;
 import android.media.MediaPlayer;
 import android.os.Environment;
 
-public class PlayAudioAction implements Action {
+import org.triggertracker.locationservices.TriggerLocation;
+
+public class PlayDynamicAudioAction implements Action {
 
 	/**
 	 * Constructor
 	 *
 	 * @param audioFile The path to the audio file on the external file storage that you want this action to play.
 	 */
-	public PlayAudioAction(String audioFile) {
+	public PlayDynamicAudioAction(String audioFile, final TriggerLocation audioLocation) {
 		mAudioToTrigger = audioFile;
+		mAudioLocation = audioLocation;
+		mMaxVolume = 1.0f;
+		mPlayer = new MediaPlayer();
 	}
 
 	@Override
 	public void trigger() {
 		System.err.println("Triggering PlayAudio - " + mAudioToTrigger);
 
-		MediaPlayer mp = new MediaPlayer();
         try {
-            mp.setDataSource(Environment.getExternalStorageDirectory() + mAudioToTrigger);
-            mp.prepare();
-            mp.start();
+            mPlayer.setDataSource(Environment.getExternalStorageDirectory() + mAudioToTrigger);
+            mPlayer.prepare();
+            // mPlayer.setLooping(true); -- For when we go with ambient sounds.
+            mPlayer.start();
 
         } catch (Exception e) {
             System.err.println("Unable to play audio action: " + mAudioToTrigger);
@@ -49,8 +54,38 @@ public class PlayAudioAction implements Action {
 
 	@Override
 	public void update() {
-		return;	// Nothing needs updating in this action.
+		// Volume is the inverse of the distance. The closer to the desired
+		// location, the louder the track.
+        float targetVolume = mAudioLocation.distance() / MAX_DISTANCE;
+        targetVolume = targetVolume * mMaxVolume;
+        targetVolume = (float) -Math.log10(targetVolume);
+
+        if (targetVolume < 0.0f) {
+            targetVolume = 0.0f;
+        }
+
+        if (targetVolume > 1.0f) {
+            targetVolume = 1.0f;
+        }
+
+        float deltaV = (targetVolume - mCurrentVolume) / INTERPOLATE_STEPS;
+
+        if (deltaV < MIN_STEP_SIZE) {
+           mCurrentVolume = targetVolume;
+        } else {
+            mCurrentVolume = mCurrentVolume + deltaV;
+        }
+
+        //System.err.println("******D:" + mLocation.distance() + ":" + targetVolume + "=" + mCurrentVolume + "+" + deltaV);
+        mPlayer.setVolume(mCurrentVolume, mCurrentVolume);
 	}
 
+	private TriggerLocation mAudioLocation;
+	private MediaPlayer mPlayer;
+	private float mMaxVolume;
+	private float mCurrentVolume = 0.0f;
+	private static float MAX_DISTANCE = 15.0f;
+	private static float INTERPOLATE_STEPS = 10.0f;
+	private static float MIN_STEP_SIZE = 0.02f;
 	private String mAudioToTrigger;
 }

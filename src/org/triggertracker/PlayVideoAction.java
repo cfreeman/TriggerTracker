@@ -38,6 +38,11 @@ public class PlayVideoAction implements Action {
 		parentApplication.startActivity(dialogIntent);
 	}
 
+	@Override
+	public void update() {
+		return;	// Nothing needs updating in this action.
+	}
+
 	private Application parentApplication;
 	private Context parentContext;
 	private String videoToTrigger;

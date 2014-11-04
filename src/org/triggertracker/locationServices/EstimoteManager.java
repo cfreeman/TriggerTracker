@@ -38,12 +38,16 @@ public class EstimoteManager {
 	}
 
 	public double getLastKnownDistance(String beaconAddress) {
-		Double d = ranges.get(beaconAddress);
+		try {
+			Double d = ranges.get(beaconAddress);
 
-		if (d == null) {
+			if (d == null) {
+				return Double.MAX_VALUE;
+			} else {
+				return d.doubleValue();
+			}
+		} catch (Exception e) {
 			return Double.MAX_VALUE;
-		} else {
-			return d.doubleValue();
 		}
 	}
 

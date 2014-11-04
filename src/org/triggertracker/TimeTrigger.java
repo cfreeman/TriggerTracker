@@ -56,6 +56,8 @@ public class TimeTrigger implements Trigger {
 			hasTriggered = true;
 			System.err.println("Time Trigger Tripped [" + minutes + "]");
 		}
+
+		action.update();
 	}
 
 	@Override

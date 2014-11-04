@@ -39,6 +39,8 @@ public class LocationTrigger implements Trigger {
 				hasTriggered = true;
 			}
 		}
+
+		action.update();
 	}
 
 	@Override
