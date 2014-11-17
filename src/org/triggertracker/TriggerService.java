@@ -91,7 +91,7 @@ public class TriggerService extends Service implements LocationListener {
 			MediaPlayer mPlayer = new MediaPlayer();
 			mPlayer.setDataSource(Environment.getExternalStorageDirectory() + "/soundTrack.mp3");
 			mPlayer.prepare();
-			mPlayer.setVolume(0.25f, 0.25f);
+			mPlayer.setVolume(0.33f, 0.33f);
 			mPlayer.setLooping(true);
 			mPlayer.start();
 		} catch (Exception e) {
@@ -108,7 +108,7 @@ public class TriggerService extends Service implements LocationListener {
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 				ChainTrigger chain = new ChainTrigger(null);
 
-				chain.addTrigger(new DelayedTrigger(30, new PlayAudioAction("/timeTrigger.mp3")));
+				chain.addTrigger(new DelayedTrigger(15, new PlayAudioAction("/timeTrigger.mp3")));
 
 				TriggerLocation loc = new EstimoteLocation(mEstimoteManager, "CC:4A:11:09:A2:C3");
 				chain.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station1.mp3", loc)));
@@ -125,7 +125,7 @@ public class TriggerService extends Service implements LocationListener {
 				ChainTrigger station5 = new ChainTrigger(null);
 				loc = new EstimoteLocation(mEstimoteManager, "EA:83:5B:66:2C:B2");
 				station5.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station5.mp3", loc)));
-				station5.addTrigger(new DelayedTrigger(135, new Action() {
+				station5.addTrigger(new DelayedTrigger(78, new Action() {
 					@Override
 					public void trigger() {
 						try {

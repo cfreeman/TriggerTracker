@@ -35,5 +35,5 @@ public class EstimoteLocation implements TriggerLocation {
 
 	private EstimoteManager em;
 	private String address;
-	private static final double RADIUS = 2.5;
+	private static final double RADIUS = 3.5;
 }

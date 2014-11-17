@@ -76,7 +76,7 @@ public class PlayDynamicAudioAction implements Action {
             mCurrentVolume = mCurrentVolume + deltaV;
         }
 
-        System.err.println("******D:" + mAudioLocation.distance() + ":" + targetVolume + "=" + mCurrentVolume + "+" + deltaV);
+        // System.err.println("******D:" + mAudioLocation.distance() + ":" + targetVolume + "=" + mCurrentVolume + "+" + deltaV);
         mPlayer.setVolume(mCurrentVolume, mCurrentVolume);
 	}
 
@@ -84,7 +84,7 @@ public class PlayDynamicAudioAction implements Action {
 	private MediaPlayer mPlayer;
 	private float mMaxVolume;
 	private float mCurrentVolume = 0.0f;
-	private static float MAX_DISTANCE = 15.0f;
+	private static float MAX_DISTANCE = 10.0f;
 	private static float INTERPOLATE_STEPS = 10.0f;
 	private static float MIN_STEP_SIZE = 0.002f;
 	private String mAudioToTrigger;
