@@ -6,9 +6,10 @@ An android application that can be configured for use in locative performances.
 
 **Performances powered by TriggerTracker:**
 
-* [http://reprage.com/post/capital-city/](http://reprage.com/post/capital-city/)
-* [http://reprage.com/post/alice/](http://reprage.com/post/alice/)
-* [http://reprage.com/post/kansas/](http://reprage.com/post/kansas/)
+* [Clarity in Transit](http://reprage.com/post/clarity-in-transit/)
+* [This is Capital City](http://reprage.com/post/capital-city/)
+* [Where's Alice](http://reprage.com/post/alice/)
+* [This is Kansas City](http://reprage.com/post/kansas/)
 
 ## Building and Installing
 
