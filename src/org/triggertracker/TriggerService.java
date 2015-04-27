@@ -43,6 +43,7 @@ import com.estimote.sdk.BeaconManager;
 
 import org.triggertracker.locationservices.EstimoteLocation;
 import org.triggertracker.locationservices.EstimoteManager;
+import org.triggertracker.locationservices.GPSManager;
 import org.triggertracker.locationservices.TriggerLocation;
 
 public class TriggerService extends Service implements LocationListener {
@@ -51,6 +52,8 @@ public class TriggerService extends Service implements LocationListener {
 	private static final int POLL_INTERVAL = 500;
 
 	private LocationManager mLocationManager;
+	private GPSManager mGPSManager;
+
 	private BeaconManager mBeaconManager;
 	private EstimoteManager mEstimoteManager;
 
@@ -76,14 +79,15 @@ public class TriggerService extends Service implements LocationListener {
 				}
 			}
 		});
+		mEstimoteManager = new EstimoteManager(mBeaconManager);
 
 		// Enable the GPS - updating every second or if we move more than 1 meter.
 		mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 		mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, POLL_INTERVAL, 1.0f, this);
 
-		mEstimoteManager = new EstimoteManager(mBeaconManager);
+		mGPSManager = new GPSManager(mLocationManager);
 
-		//config = new TrackerConfiguration();
+		TrackerConfiguration config = new TrackerConfiguration(mEstimoteManager, mGPSManager);
 		//config.loadFromYaml("/trackerConfig.yml");
 
 		// static looping background sound track.
