@@ -64,4 +64,49 @@ public class TrackerConfigurationTest extends TestCase {
 		} catch (Exception e) {
 		}
 	}
+
+	// Build action tests.
+	public void testCallBackAction() throws Exception {
+		JSONObject o = new JSONObject("{\"type\" : \"call-back\",\"callback\" : \"foo\", \"number\" : \"555-balls\"}");
+		Action a = mTrackerConfiguration.buildAction(o);
+
+		assertNotNull(a);
+		assertEquals(new CallBackAction("foo", "555-balls"), a);
+	}
+
+	public void testAudioAction() throws Exception {
+		JSONObject o = new JSONObject("{\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\"}");
+		Action a = mTrackerConfiguration.buildAction(o);
+
+		assertNotNull(a);
+		assertEquals(new PlayAudioAction("tunes.wav"), a);
+	}
+
+	public void testDynamicAudioAction() throws Exception {
+		JSONObject o = new JSONObject("{\"type\" : \"dynamic-audio\", \"audioFile\" : \"/station1.mp3\", \"fader\" : { \"type\" : \"estimote\", \"beacon\" : \"CC:4A:11:09:A2:C3\"}}");
+		Action a = mTrackerConfiguration.buildAction(o);
+
+		assertNotNull(a);
+		assertEquals(new PlayDynamicAudioAction("/station1.mp3", new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3")), a);
+	}
+
+	public void testVideoAction() {
+		try {
+			JSONObject o = new JSONObject("{\"type\" : \"video\",\"videoFile\" : \"anime.avi\"}");
+			Action a = mTrackerConfiguration.buildAction(o);
+			fail(); //We expect an exception to be thrown by the above.
+
+		} catch (Exception e) {
+		}
+	}
+
+	public void testUnknownAction() {
+		try {
+			JSONObject o = new JSONObject("{\"type\" : \"fooble\",\"videoFile\" : \"anime.avi\"}");
+			Action a = mTrackerConfiguration.buildAction(o);
+			fail(); //We expect an exception to be thrown by the above.
+
+		} catch (Exception e) {
+		}
+	}
 }

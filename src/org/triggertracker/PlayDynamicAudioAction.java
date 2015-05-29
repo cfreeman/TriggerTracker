@@ -80,6 +80,32 @@ public class PlayDynamicAudioAction implements Action {
         mPlayer.setVolume(mCurrentVolume, mCurrentVolume);
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof PlayDynamicAudioAction)) {
+			return false;
+		}
+
+		if (o == this) {
+			return true;
+		}
+
+		PlayDynamicAudioAction rhs = (PlayDynamicAudioAction) o;
+		boolean result = true;
+		if (mAudioLocation != null) {
+			result = result && mAudioLocation.equals(rhs.mAudioLocation);
+		}
+
+		if (mAudioToTrigger != null) {
+			result = result && mAudioToTrigger.equals(rhs.mAudioToTrigger);
+		}
+
+		result = result && (Math.abs(mMaxVolume - rhs.mMaxVolume) < 0.001);
+		result = result && (Math.abs(MAX_DISTANCE - rhs.MAX_DISTANCE) < 0.001);
+		result = result && (Math.abs(INTERPOLATE_STEPS - rhs.INTERPOLATE_STEPS) < 0.001);
+		return result && (Math.abs(MIN_STEP_SIZE - rhs.MIN_STEP_SIZE) < 0.001);
+	}
+
 	private TriggerLocation mAudioLocation;
 	private MediaPlayer mPlayer;
 	private float mMaxVolume;

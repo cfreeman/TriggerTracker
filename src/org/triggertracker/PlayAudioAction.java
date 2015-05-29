@@ -52,5 +52,19 @@ public class PlayAudioAction implements Action {
 		return;	// Nothing needs updating in this action.
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof PlayAudioAction)) {
+			return false;
+		}
+
+		if (o == this) {
+			return true;
+		}
+
+		PlayAudioAction rhs = (PlayAudioAction) o;
+		return mAudioToTrigger.equals(rhs.mAudioToTrigger);
+	}
+
 	private String mAudioToTrigger;
 }

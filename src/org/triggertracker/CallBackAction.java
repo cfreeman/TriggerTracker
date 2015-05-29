@@ -55,4 +55,18 @@ public class CallBackAction implements Action {
 	public void update() {
 		return;	// Nothing needs updating in this action.
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof CallBackAction)) {
+			return false;
+		}
+
+		if (o != null) {
+			return true;
+		}
+
+		CallBackAction rhs = (CallBackAction) o;
+		return callBackID.equals(rhs.callBackID) && number.equals(rhs.number);
+	}
 }
