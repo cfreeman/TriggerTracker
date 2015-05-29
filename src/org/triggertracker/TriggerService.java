@@ -114,39 +114,39 @@ public class TriggerService extends Service implements LocationListener {
 
 				chain.addTrigger(new DelayedTrigger(15, new PlayAudioAction("/timeTrigger.mp3")));
 
-				TriggerLocation loc = new EstimoteLocation(mEstimoteManager, "CC:4A:11:09:A2:C3");
-				chain.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station1.mp3", loc)));
+				// TriggerLocation loc = new EstimoteLocation(mEstimoteManager, "CC:4A:11:09:A2:C3");
+				// chain.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station1.mp3", loc)));
 
-				loc = new EstimoteLocation(mEstimoteManager, "F3:13:F9:66:8B:95");
-				chain.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station2.mp3", loc)));
+				// loc = new EstimoteLocation(mEstimoteManager, "F3:13:F9:66:8B:95");
+				// chain.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station2.mp3", loc)));
 
-				loc = new EstimoteLocation(mEstimoteManager, "F5:01:C3:01:18:3E");
-				chain.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station3.mp3", loc)));
+				// loc = new EstimoteLocation(mEstimoteManager, "F5:01:C3:01:18:3E");
+				// chain.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station3.mp3", loc)));
 
-				loc = new EstimoteLocation(mEstimoteManager, "D7:CF:78:0F:4B:E2");
-				chain.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station4.mp3", loc)));
+				// loc = new EstimoteLocation(mEstimoteManager, "D7:CF:78:0F:4B:E2");
+				// chain.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station4.mp3", loc)));
 
-				ChainTrigger station5 = new ChainTrigger(null);
-				loc = new EstimoteLocation(mEstimoteManager, "EA:83:5B:66:2C:B2");
-				station5.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station5.mp3", loc)));
-				station5.addTrigger(new DelayedTrigger(78, new Action() {
-					@Override
-					public void trigger() {
-						try {
-							Intent b = new Intent(Intent.ACTION_VIEW, Uri.parse("http://basichuman.com.au"));
-							b.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-							startActivity(b);
-						} catch (Exception e) {
-							Log.e(TAG, "Unable to pop browser: ", e);
-						}
-					}
+				// ChainTrigger station5 = new ChainTrigger(null);
+				// loc = new EstimoteLocation(mEstimoteManager, "EA:83:5B:66:2C:B2");
+				// station5.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station5.mp3", loc)));
+				// station5.addTrigger(new DelayedTrigger(78, new Action() {
+				// 	@Override
+				// 	public void trigger() {
+				// 		try {
+				// 			Intent b = new Intent(Intent.ACTION_VIEW, Uri.parse("http://basichuman.com.au"));
+				// 			b.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				// 			startActivity(b);
+				// 		} catch (Exception e) {
+				// 			Log.e(TAG, "Unable to pop browser: ", e);
+				// 		}
+				// 	}
 
-					@Override
-					public void update() {
-						return;	// Nothing needs updating in this action.
-					}
-				}));
-				chain.addTrigger(station5);
+				// 	@Override
+				// 	public void update() {
+				// 		return;	// Nothing needs updating in this action.
+				// 	}
+				// }));
+				// chain.addTrigger(station5);
 
 				triggers.add(chain);
 

@@ -52,6 +52,7 @@ COPY gen/ /android/gen/
 COPY libs/ /android/libs/
 COPY res/ /android/res/
 COPY src/ /android/src/
+COPY tests/ /android/tests
 
 COPY AndroidManifest.xml /android/
 COPY ant.properties /android/
@@ -60,4 +61,9 @@ COPY local.properties /android/
 COPY project.properties /android/
 
 # Build the Android application within the docker container.
-RUN ant debug
+# RUN ant clean debug
+
+WORKDIR /android/tests
+#RUN adb shell pm uninstall -k org.triggertracker
+#RUN ant clean
+
