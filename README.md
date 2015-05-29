@@ -13,9 +13,16 @@ An android application that can be configured for use in locative performances.
 
 ## Building and Installing
 
-	ant debug
+### Using the docker development environment:
+
 	docker run --privileged -v /dev/bus/usb:/dev/bus/usb -i -t triggertracker ant debug install test
 	docker run --privileged -v /dev/bus/usb:/dev/bus/usb -t -t triggertracker adb install -r bin/TriggerTracker-debug.apk
+
+### Using the android SDK installed natively:
+
+	ant clean debug install test
+	ant debug
+	adb install -r bin/TriggerTracker-debug.apk
 
 ## Connecting for Debug
 
