@@ -20,9 +20,48 @@ package org.triggertracker;
 
 import junit.framework.TestCase;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import org.triggertracker.locationservices.EstimoteLocation;
+import org.triggertracker.locationservices.EstimoteManager;
+import org.triggertracker.locationservices.GPSLocation;
+import org.triggertracker.locationservices.GPSManager;
+import org.triggertracker.locationservices.TriggerLocation;
+
 public class TrackerConfigurationTest extends TestCase {
 
-	public void testFoo() {
-		assertTrue(false);
+	private TrackerConfiguration mTrackerConfiguration;
+	private TriggerService mTriggerService;
+
+	protected void setUp() {
+		mTriggerService = new TriggerService();
+		mTrackerConfiguration = new TrackerConfiguration(mTriggerService.getEstimoteManager(), mTriggerService.getGPSManager());
+	}
+
+	// Build location tests.
+	public void testEstimoteLocation() throws Exception {
+		JSONObject o = new JSONObject("{\"type\" : \"estimote\",\"beacon\" : \"CC:4A:11:09:A2:C3\"}");
+		TriggerLocation l = mTrackerConfiguration.buildLocation(o);
+
+		assertNotNull(l);
+		assertEquals(new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3"), l);
+	}
+
+	public void testGPSLocation() throws Exception {
+		JSONObject o = new JSONObject("{\"type\" : \"gps\",\"latitude\" : 15.5, \"longitude\" : 16.6}");
+		TriggerLocation l = mTrackerConfiguration.buildLocation(o);
+
+		assertNotNull(l);
+		assertEquals(new GPSLocation(mTriggerService.getGPSManager(), 15.5f, 16.6f), l);
+	}
+
+	public void testUnknownLocation() {
+		try {
+			JSONObject o = new JSONObject("{\"type\" : \"foo\",\"latitude\" : 15.5, \"longitude\" : 16.6}");
+			TriggerLocation l = mTrackerConfiguration.buildLocation(o);
+			fail();	// We expect an exception to be thrown by the above.
+		} catch (Exception e) {
+		}
 	}
 }

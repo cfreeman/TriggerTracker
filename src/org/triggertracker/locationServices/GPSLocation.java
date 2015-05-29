@@ -34,6 +34,28 @@ public class GPSLocation implements TriggerLocation {
 		return (float) gm.getLastKnownDistance(lat, lon);
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof GPSLocation)) {
+			return false;
+		}
+
+		if (o == this) {
+			return true;
+		}
+
+		GPSLocation rhs = (GPSLocation) o;
+		boolean result = true;
+		if (gm != null) {
+			result = result && gm.equals(rhs);
+		}
+
+		result = result && (Math.abs(lat - rhs.lat) < 0.001);
+		result = result && (Math.abs(lon - rhs.lon) < 0.001);
+
+		return result && (Math.abs(RADIUS - rhs.RADIUS) < 0.001);
+	}
+
 	private GPSManager gm;
 	private float lat;
 	private float lon;

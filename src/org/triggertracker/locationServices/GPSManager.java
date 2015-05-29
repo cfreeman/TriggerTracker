@@ -43,5 +43,19 @@ public class GPSManager {
 		}
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof GPSManager)) {
+			return false;
+		}
+
+		if (o == this) {
+			return true;
+		}
+
+		GPSManager rhs = (GPSManager) o;
+		return lm == rhs.lm;
+	}
+
 	private LocationManager lm;
 }

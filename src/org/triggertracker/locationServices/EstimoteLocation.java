@@ -33,6 +33,29 @@ public class EstimoteLocation implements TriggerLocation {
 		return (float) em.getLastKnownDistance(address);
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof EstimoteLocation)) {
+			return false;
+		}
+
+		if (o == this) {
+			return true;
+		}
+
+		EstimoteLocation rhs = (EstimoteLocation) o;
+		boolean result = true;
+		if (em != null) {
+			result = result && em.equals(rhs.em);
+		}
+
+		if (address != null) {
+			result = result && address.equals(rhs.address);
+		}
+
+		return result && (Math.abs(RADIUS - rhs.RADIUS) < 0.001) ;
+	}
+
 	private EstimoteManager em;
 	private String address;
 	private static final double RADIUS = 3.5;

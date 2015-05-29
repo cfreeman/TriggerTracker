@@ -61,6 +61,14 @@ public class TriggerService extends Service implements LocationListener {
 
 	//private TrackerConfiguration config;
 
+	public GPSManager getGPSManager() {
+		return mGPSManager;
+	}
+
+	public EstimoteManager getEstimoteManager() {
+		return mEstimoteManager;
+	}
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);

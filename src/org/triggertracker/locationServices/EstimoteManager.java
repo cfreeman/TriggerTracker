@@ -66,5 +66,19 @@ public class EstimoteManager {
 		}
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof EstimoteManager)) {
+			return false;
+		}
+
+		if (o == this) {
+			return true;
+		}
+
+		EstimoteManager rhs = (EstimoteManager) o;
+		return mRanges.equals(rhs.mRanges);
+	}
+
 	private Hashtable<String, Double> mRanges = new Hashtable<String, Double>();
 }
