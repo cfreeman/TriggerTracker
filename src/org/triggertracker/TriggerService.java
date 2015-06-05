@@ -41,6 +41,8 @@ import android.widget.Toast;
 import com.estimote.sdk.Region;
 import com.estimote.sdk.BeaconManager;
 
+import org.json.JSONObject;
+
 import org.triggertracker.locationservices.EstimoteLocation;
 import org.triggertracker.locationservices.EstimoteManager;
 import org.triggertracker.locationservices.GPSManager;
@@ -58,8 +60,6 @@ public class TriggerService extends Service implements LocationListener {
 	private EstimoteManager mEstimoteManager;
 
 	private boolean mIsRunning = true;
-
-	//private TrackerConfiguration config;
 
 	public GPSManager getGPSManager() {
 		return mGPSManager;
@@ -95,75 +95,40 @@ public class TriggerService extends Service implements LocationListener {
 
 		mGPSManager = new GPSManager(mLocationManager);
 
-		TrackerConfiguration config = new TrackerConfiguration(mEstimoteManager, mGPSManager);
-		//config.loadFromYaml("/trackerConfig.yml");
+		final TrackerConfiguration config = new TrackerConfiguration(mEstimoteManager, mGPSManager);
+		final String configFile = Environment.getExternalStorageDirectory() + "/config.json";
 
-		// static looping background sound track.
 		try {
-			MediaPlayer mPlayer = new MediaPlayer();
-			mPlayer.setDataSource(Environment.getExternalStorageDirectory() + "/soundTrack.mp3");
-			mPlayer.prepare();
-			mPlayer.setVolume(0.33f, 0.33f);
-			mPlayer.setLooping(true);
-			mPlayer.start();
+			// If supplied, start static looping background soundtrack.
+			JSONObject soundtrack = config.loadSoundtrackFromJSON(configFile);
+			if (soundtrack != null) {
+				MediaPlayer mPlayer = new MediaPlayer();
+				mPlayer.setDataSource(Environment.getExternalStorageDirectory() + soundtrack.getString("audioFile"));
+				mPlayer.prepare();
+				mPlayer.setVolume((float) soundtrack.getDouble("volume"), (float) soundtrack.getDouble("volume"));
+				mPlayer.setLooping(true);
+				mPlayer.start();
+			}
 		} catch (Exception e) {
-			Log.e(TAG, "Unable to set background sound track", e);
+			System.err.println("Unable to set background sound track - " + e);
 		}
-
-        // Scale volume percent by max volume.
-		// AudioManager aManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-		// int maxVolume = aManager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
 
 		new Thread(new Runnable() {
 			public void run() {
 				Looper.prepare();
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
-				ChainTrigger chain = new ChainTrigger(null);
-
-				chain.addTrigger(new DelayedTrigger(15, new PlayAudioAction("/timeTrigger.mp3")));
-
-				// TriggerLocation loc = new EstimoteLocation(mEstimoteManager, "CC:4A:11:09:A2:C3");
-				// chain.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station1.mp3", loc)));
-
-				// loc = new EstimoteLocation(mEstimoteManager, "F3:13:F9:66:8B:95");
-				// chain.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station2.mp3", loc)));
-
-				// loc = new EstimoteLocation(mEstimoteManager, "F5:01:C3:01:18:3E");
-				// chain.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station3.mp3", loc)));
-
-				// loc = new EstimoteLocation(mEstimoteManager, "D7:CF:78:0F:4B:E2");
-				// chain.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station4.mp3", loc)));
-
-				// ChainTrigger station5 = new ChainTrigger(null);
-				// loc = new EstimoteLocation(mEstimoteManager, "EA:83:5B:66:2C:B2");
-				// station5.addTrigger(new LocationTrigger(loc, new PlayDynamicAudioAction("/station5.mp3", loc)));
-				// station5.addTrigger(new DelayedTrigger(78, new Action() {
-				// 	@Override
-				// 	public void trigger() {
-				// 		try {
-				// 			Intent b = new Intent(Intent.ACTION_VIEW, Uri.parse("http://basichuman.com.au"));
-				// 			b.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				// 			startActivity(b);
-				// 		} catch (Exception e) {
-				// 			Log.e(TAG, "Unable to pop browser: ", e);
-				// 		}
-				// 	}
-
-				// 	@Override
-				// 	public void update() {
-				// 		return;	// Nothing needs updating in this action.
-				// 	}
-				// }));
-				// chain.addTrigger(station5);
-
-				triggers.add(chain);
+				try {
+					triggers = config.loadTriggersFromJSON(configFile);
+					//triggers.add(config.loadFromYaml(Environment.getExternalStorageDirectory() + "/config.json"));
+				} catch (Exception e) {
+					System.err.println("Unable to parse configuration file - " + e);
+				}
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 				PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "TriggerTracker");
 
 				while (mIsRunning) {
-					// Prevent the device from going to sleep.
-	                wl.acquire();
+	                wl.acquire();  // Prevent the device from going to sleep.
 
 					// For each registered trigger - see if it fires.
 					for (Trigger t : triggers) {

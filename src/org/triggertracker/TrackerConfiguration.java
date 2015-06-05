@@ -24,6 +24,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -115,9 +117,25 @@ public class TrackerConfiguration {
 		}
 	}
 
-	public Trigger loadFromYaml(String filepath) throws Exception {
+	public ArrayList<Trigger> loadTriggersFromJSON(String filepath) throws Exception {
+		JSONObject jObject = new JSONObject(loadConfiguration(filepath));
+		JSONArray triggers = jObject.getJSONArray("triggers");
+		ArrayList<Trigger> res = new ArrayList<Trigger>();
+
+		for (int i = 0; i < triggers.length(); i++) {
+			res.add(buildTrigger(triggers.getJSONObject(i)));
+		}
+
+		return res;
+	}
+
+	public JSONObject loadSoundtrackFromJSON(String filepath) throws Exception {
+		JSONObject jObject = new JSONObject(loadConfiguration(filepath));
+		return jObject.optJSONObject("soundtrack");
+	}
+
+	private String loadConfiguration(String filepath) throws Exception {
 		File configFile = new File(filepath);
-		//File configFile = new File(Environment.getExternalStorageDirectory() + filepath);
 
 		InputStream configInput = new FileInputStream(configFile);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(configInput, "UTF-8"), 8);
@@ -127,7 +145,6 @@ public class TrackerConfiguration {
 		 	sb.append(line + "\n");
 		}
 
-		JSONObject jObject = new JSONObject(sb.toString());
-		return buildTrigger(jObject.getJSONObject("trigger"));
+		return sb.toString();
 	}
 }
