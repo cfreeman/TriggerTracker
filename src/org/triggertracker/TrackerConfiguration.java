@@ -77,6 +77,7 @@ public class TrackerConfiguration {
 
 		} else if (type.equals("dynamic-audio")) {
 			return new PlayDynamicAudioAction(aObject.getString("audioFile"),
+											  aObject.getBoolean("looping"),
 											  buildLocation(aObject.getJSONObject("fader")));
 
 		} else if (type.equals("video")) {

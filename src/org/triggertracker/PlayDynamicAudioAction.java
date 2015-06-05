@@ -30,10 +30,11 @@ public class PlayDynamicAudioAction implements Action {
 	 *
 	 * @param audioFile The path to the audio file on the external file storage that you want this action to play.
 	 */
-	public PlayDynamicAudioAction(String audioFile, final TriggerLocation audioLocation) {
+	public PlayDynamicAudioAction(String audioFile, boolean looping, final TriggerLocation audioLocation) {
 		mAudioToTrigger = audioFile;
 		mAudioLocation = audioLocation;
 		mMaxVolume = 1.0f;
+		mLooping = looping;
 		mPlayer = new MediaPlayer();
 	}
 
@@ -44,7 +45,7 @@ public class PlayDynamicAudioAction implements Action {
         try {
             mPlayer.setDataSource(Environment.getExternalStorageDirectory() + mAudioToTrigger);
             mPlayer.prepare();
-            // mPlayer.setLooping(true); -- For when we go with ambient sounds.
+            mPlayer.setLooping(mLooping);
             mPlayer.start();
 
         } catch (Exception e) {
@@ -108,6 +109,7 @@ public class PlayDynamicAudioAction implements Action {
 			result = result && mAudioToTrigger.equals(rhs.mAudioToTrigger);
 		}
 
+		result = result && (mLooping == rhs.mLooping);
 		result = result && (Math.abs(mMaxVolume - rhs.mMaxVolume) < 0.001);
 		result = result && (Math.abs(MAX_DISTANCE - rhs.MAX_DISTANCE) < 0.001);
 		result = result && (Math.abs(INTERPOLATE_STEPS - rhs.INTERPOLATE_STEPS) < 0.001);
@@ -122,4 +124,5 @@ public class PlayDynamicAudioAction implements Action {
 	private static float INTERPOLATE_STEPS = 10.0f;
 	private static float MIN_STEP_SIZE = 0.002f;
 	private String mAudioToTrigger;
+	private boolean mLooping = false;
 }

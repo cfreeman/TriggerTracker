@@ -83,11 +83,11 @@ public class TrackerConfigurationTest extends TestCase {
 	}
 
 	public void testDynamicAudioAction() throws Exception {
-		JSONObject o = new JSONObject("{\"type\" : \"dynamic-audio\", \"audioFile\" : \"/station1.mp3\", \"fader\" : { \"type\" : \"estimote\", \"beacon\" : \"CC:4A:11:09:A2:C3\"}}");
+		JSONObject o = new JSONObject("{\"type\" : \"dynamic-audio\", \"audioFile\" : \"/station1.mp3\", \"looper\" : true ,\"fader\" : { \"type\" : \"estimote\", \"beacon\" : \"CC:4A:11:09:A2:C3\"}}");
 		Action a = mTrackerConfiguration.buildAction(o);
 
 		assertNotNull(a);
-		assertEquals(new PlayDynamicAudioAction("/station1.mp3", new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3")), a);
+		assertEquals(new PlayDynamicAudioAction("/station1.mp3", true, new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3")), a);
 	}
 
 	public void testVideoAction() {
