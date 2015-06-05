@@ -100,6 +100,11 @@ public class TrackerConfiguration {
 
 			return res;
 
+		} else if (type.equals("branch")) {
+			return new BranchTrigger(buildTrigger(tObject.getJSONObject("left")),
+									 buildTrigger(tObject.getJSONObject("right")),
+									 buildAction(tObject.optJSONObject("action")));
+
 		} else if (type.equals("delayed")) {
 			return new DelayedTrigger(tObject.getLong("seconds"),
 								      buildAction(tObject.optJSONObject("action")));

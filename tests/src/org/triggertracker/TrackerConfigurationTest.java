@@ -144,6 +144,16 @@ public class TrackerConfigurationTest extends TestCase {
 		assertEquals(lhs, t);
 	}
 
+	public void testBranchTrigger() throws Exception {
+		JSONObject o = new JSONObject("{\"type\" : \"branch\", \"left\" : {\"type\" : \"delayed\", \"seconds\" : 4, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"left.wav\"}}, \"right\" : {\"type\" : \"delayed\", \"seconds\" : 5, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"right.wav\"}} \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\"}}");
+		Trigger t = mTrackerConfiguration.buildTrigger(o);
+
+		assertNotNull(t);
+		DelayedTrigger left = new DelayedTrigger(4, new PlayAudioAction("left.wav"));
+		DelayedTrigger right = new DelayedTrigger(5, new PlayAudioAction("right.wav"));
+		assertEquals(new BranchTrigger(left, right, new PlayAudioAction("tunes.wav")), t);
+	}
+
 	public void testUnknownTrigger() {
 		try {
 			JSONObject o = new JSONObject("{\"type\" : \"fooble\",\"videoFile\" : \"anime.avi\"}");
