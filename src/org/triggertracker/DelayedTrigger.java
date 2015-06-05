@@ -20,18 +20,6 @@ package org.triggertracker;
 
 public class DelayedTrigger implements Trigger {
 
-	// Has this trigger gone off?
-	private boolean hasTriggered = false;
-
-	// The action to fire if the trigger has been tripped.
-	private Action action;
-
-	// The number of seconds to wait until triggering action.
-	private long seconds;
-
-	// When this trigger was first tested.
-	private long startTime = -1;
-
 	/**
 	 * Constructor.
 	 *
@@ -72,4 +60,35 @@ public class DelayedTrigger implements Trigger {
 	public boolean hasTriggered() {
 		return hasTriggered;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof DelayedTrigger)) {
+			return false;
+		}
+
+		if (o == this) {
+			return true;
+		}
+
+		DelayedTrigger rhs = (DelayedTrigger) o;
+		boolean result = true;
+
+		if (action == null) {
+			if (rhs.action != null) {
+				return false;
+			}
+		} else {
+			result = result && action.equals(rhs.action);
+		}
+
+		return result && (hasTriggered == rhs.hasTriggered)
+					  && (seconds == rhs.seconds)
+					  && (startTime == rhs.startTime);
+	}
+
+	private boolean hasTriggered = false;   // Has this trigger gone off?
+	private Action action;                  // The action to fire if the trigger has been tripped.
+	private long seconds;                   // The number of seconds to wait until triggering action.
+	private long startTime = -1;            // When this trigger was first tested.
 }

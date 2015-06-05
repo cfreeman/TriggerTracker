@@ -61,6 +61,9 @@ public class TrackerConfiguration {
 	}
 
 	public Action buildAction(JSONObject aObject) throws Exception {
+		if (aObject == null) {
+			return null;
+		}
 		String type = aObject.getString("type").toLowerCase();
 
 		if (type.equals("call-back")) {
@@ -87,7 +90,7 @@ public class TrackerConfiguration {
 		String type = tObject.getString("type").toLowerCase();
 
 		if (type.equals("chain")) {
-			ChainTrigger res = new ChainTrigger(buildAction(tObject.getJSONObject("action")));
+			ChainTrigger res = new ChainTrigger(buildAction(tObject.optJSONObject("action")));
 			JSONArray children = tObject.getJSONArray("children");
 			for (int i = 0; i < children.length(); i++) {
 				res.addTrigger(buildTrigger(children.getJSONObject(i)));
@@ -97,15 +100,15 @@ public class TrackerConfiguration {
 
 		} else if (type.equals("delayed")) {
 			return new DelayedTrigger(tObject.getLong("seconds"),
-								      buildAction(tObject.getJSONObject("action")));
+								      buildAction(tObject.optJSONObject("action")));
 
 		} else if (type.equals("location")) {
 			return new LocationTrigger(buildLocation(tObject.getJSONObject("location")),
-									   buildAction(tObject.getJSONObject("action")));
+									   buildAction(tObject.optJSONObject("action")));
 
 		} else if (type.equals("time")) {
 			return new TimeTrigger(tObject.getInt("minutesPast"),
-								   buildAction(tObject.getJSONObject("action")));
+								   buildAction(tObject.optJSONObject("action")));
 
 		} else {
 			throw new Exception("Unknown trigger type: " + type);

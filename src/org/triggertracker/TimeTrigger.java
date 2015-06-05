@@ -22,16 +22,6 @@ import java.util.Calendar;
 
 public class TimeTrigger implements Trigger {
 
-	// Has this trigger gone off?
-	private boolean hasTriggered = false;
-
-	// The action to fire if the trigger has been tripped.
-	private Action action;
-
-	// This trigger trips when the time is the same or greater than the
-	// following number of minutes past the hour.
-	private int minutes;
-
 	/**
 	 * Constructor.
 	 *
@@ -69,4 +59,33 @@ public class TimeTrigger implements Trigger {
 	public boolean hasTriggered() {
 		return hasTriggered;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof TimeTrigger)) {
+			return false;
+		}
+
+		if (o == this) {
+			return true;
+		}
+
+		TimeTrigger rhs = (TimeTrigger) o;
+		boolean result = true;
+
+		if (action == null) {
+			if (rhs.action != null) {
+				return false;
+			}
+		} else {
+			result = result && action.equals(rhs.action);
+		}
+
+		return result && (hasTriggered == rhs.hasTriggered) && (minutes == rhs.minutes);
+	}
+
+	private boolean hasTriggered = false;	// Has this trigger gone off?
+	private Action action;					// The action to fire if the trigger has been tripped.
+	private int minutes;					// This trigger trips when the time is the same or greater than the
+											// following number of minutes past the hour.
 }

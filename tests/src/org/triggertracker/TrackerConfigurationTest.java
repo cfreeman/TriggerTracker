@@ -109,4 +109,49 @@ public class TrackerConfigurationTest extends TestCase {
 		} catch (Exception e) {
 		}
 	}
+
+	public void testTimeTrigger() throws Exception {
+		JSONObject o = new JSONObject("{\"type\" : \"time\", \"minutesPast\" : 4, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\"}}");
+		Trigger t = mTrackerConfiguration.buildTrigger(o);
+
+		assertNotNull(t);
+		assertEquals(new TimeTrigger(4, new PlayAudioAction("tunes.wav")), t);
+	}
+
+	public void testLocationTrigger() throws Exception {
+		JSONObject o = new JSONObject("{\"type\" : \"location\", \"location\" : {\"type\" : \"estimote\",\"beacon\" : \"CC:4A:11:09:A2:C3\"}, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\"}}");
+		Trigger t = mTrackerConfiguration.buildTrigger(o);
+
+		assertNotNull(t);
+		assertEquals(new LocationTrigger(new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3"), new PlayAudioAction("tunes.wav")), t);
+	}
+
+	public void testDelayedTrigger() throws Exception {
+		JSONObject o = new JSONObject("{\"type\" : \"delayed\", \"seconds\" : 5, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\"}}");
+		Trigger t = mTrackerConfiguration.buildTrigger(o);
+
+		assertNotNull(t);
+		assertEquals(new DelayedTrigger(5, new PlayAudioAction("tunes.wav")), t);
+	}
+
+	public void testChainTrigger() throws Exception {
+		JSONObject o = new JSONObject("{\"type\" : \"chain\", \"action\" : null, \"children\" : [{\"type\" : \"delayed\", \"seconds\" : 5, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\"}}]}");
+		Trigger t = mTrackerConfiguration.buildTrigger(o);
+
+		assertNotNull(t);
+		ChainTrigger lhs = new ChainTrigger(null);
+		lhs.addTrigger(new DelayedTrigger(5, new PlayAudioAction("tunes.wav")));
+		assertEquals(lhs, t);
+	}
+
+	public void testUnknownTrigger() {
+		try {
+			JSONObject o = new JSONObject("{\"type\" : \"fooble\",\"videoFile\" : \"anime.avi\"}");
+			Trigger t = mTrackerConfiguration.buildTrigger(o);
+			fail(); // We expect an exception to be thrown above.
+
+		} catch (Exception e) {
+
+		}
+	}
 }

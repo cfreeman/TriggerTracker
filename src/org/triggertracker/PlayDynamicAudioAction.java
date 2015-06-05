@@ -92,11 +92,19 @@ public class PlayDynamicAudioAction implements Action {
 
 		PlayDynamicAudioAction rhs = (PlayDynamicAudioAction) o;
 		boolean result = true;
-		if (mAudioLocation != null) {
+		if (mAudioLocation == null) {
+			if (rhs.mAudioLocation != null) {
+				return false;
+			}
+		} else {
 			result = result && mAudioLocation.equals(rhs.mAudioLocation);
 		}
 
-		if (mAudioToTrigger != null) {
+		if (mAudioToTrigger == null) {
+			if (rhs.mAudioToTrigger != null) {
+				return false;
+			}
+		} else {
 			result = result && mAudioToTrigger.equals(rhs.mAudioToTrigger);
 		}
 

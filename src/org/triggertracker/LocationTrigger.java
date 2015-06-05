@@ -53,6 +53,38 @@ public class LocationTrigger implements Trigger {
 		return hasTriggered;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof LocationTrigger)) {
+			return false;
+		}
+
+		if (o == this) {
+			return true;
+		}
+
+		LocationTrigger rhs = (LocationTrigger) o;
+		boolean result = true;
+
+		if (action == null) {
+			if (rhs.action != null) {
+				return false;
+			}
+		} else {
+			result = result && action.equals(rhs.action);
+		}
+
+		if (location == null) {
+			if (rhs.location != null) {
+				return false;
+			}
+		} else {
+			result = result && location.equals(rhs.location);
+		}
+
+		return result && (hasTriggered == rhs.hasTriggered);
+	}
+
 	private boolean hasTriggered = false;		// Has this trigger gone off?
 	private TriggerLocation location;			// The desired location to trip the trigger.
 	private Action action;						// The action to fire if the trigger has been tripped.

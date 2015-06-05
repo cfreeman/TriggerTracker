@@ -22,18 +22,6 @@ import java.util.ArrayList;
 
 public class ChainTrigger implements Trigger {
 
-	// The chain of triggers to fire one at a time.
-	private ArrayList<Trigger> chainOfTriggers;
-
-	// The index of the current trigger in the chain.
-	private int currentTrigger;
-
-	// Has this trigger gone off?
-	private boolean hasTriggered = false;
-
-	// The action to fire if the trigger has been tripped.
-	private Action action;
-
 	/**
 	 * @param actionToTrigger The action to trigger once everything in the chain has triggered.
 	 */
@@ -91,4 +79,35 @@ public class ChainTrigger implements Trigger {
 	public boolean hasTriggered() {
 		return hasTriggered;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof ChainTrigger)) {
+			return false;
+		}
+
+		if (o == this) {
+			return true;
+		}
+
+		ChainTrigger rhs = (ChainTrigger) o;
+		boolean result = true;
+
+		if (action == null) {
+			if (rhs.action != null) {
+				return false;
+			}
+		} else {
+			result = result && action.equals(rhs.action);
+		}
+
+		result = result && chainOfTriggers.equals(rhs.chainOfTriggers);
+		result = result && (currentTrigger == rhs.currentTrigger);
+		return result && (hasTriggered == rhs.hasTriggered);
+	}
+
+	private ArrayList<Trigger> chainOfTriggers;	// The chain of triggers to fire one at a time.
+	private int currentTrigger;					// The index of the current trigger in the chain.
+	private boolean hasTriggered = false;		// Has this trigger gone off?
+	private Action action;						// The action to fire if the trigger has been tripped.
 }
