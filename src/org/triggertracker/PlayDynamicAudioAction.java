@@ -30,10 +30,10 @@ public class PlayDynamicAudioAction implements Action {
 	 *
 	 * @param audioFile The path to the audio file on the external file storage that you want this action to play.
 	 */
-	public PlayDynamicAudioAction(String audioFile, boolean looping, final TriggerLocation audioLocation) {
+	public PlayDynamicAudioAction(String audioFile, boolean looping, float volume, final TriggerLocation audioLocation) {
 		mAudioToTrigger = audioFile;
 		mAudioLocation = audioLocation;
-		mMaxVolume = 1.0f;
+		mMaxVolume = volume;
 		mLooping = looping;
 		mPlayer = new MediaPlayer();
 	}

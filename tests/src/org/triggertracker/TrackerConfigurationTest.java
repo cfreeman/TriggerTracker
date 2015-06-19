@@ -75,19 +75,19 @@ public class TrackerConfigurationTest extends TestCase {
 	}
 
 	public void testAudioAction() throws Exception {
-		JSONObject o = new JSONObject("{\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\"}");
+		JSONObject o = new JSONObject("{\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\", \"volume\" : 0.5}");
 		Action a = mTrackerConfiguration.buildAction(o);
 
 		assertNotNull(a);
-		assertEquals(new PlayAudioAction("tunes.wav"), a);
+		assertEquals(new PlayAudioAction("tunes.wav", 0.5f), a);
 	}
 
 	public void testDynamicAudioAction() throws Exception {
-		JSONObject o = new JSONObject("{\"type\" : \"dynamic-audio\", \"audioFile\" : \"/station1.mp3\", \"looper\" : true ,\"fader\" : { \"type\" : \"estimote\", \"beacon\" : \"CC:4A:11:09:A2:C3\"}}");
+		JSONObject o = new JSONObject("{\"type\" : \"dynamic-audio\", \"audioFile\" : \"/station1.mp3\", \"looping\" : true, \"volume\" : 0.5, \"fader\" : { \"type\" : \"estimote\", \"beacon\" : \"CC:4A:11:09:A2:C3\"}}");
 		Action a = mTrackerConfiguration.buildAction(o);
 
 		assertNotNull(a);
-		assertEquals(new PlayDynamicAudioAction("/station1.mp3", true, new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3")), a);
+		assertEquals(new PlayDynamicAudioAction("/station1.mp3", true, 0.5f, new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3")), a);
 	}
 
 	public void testVideoAction() {
@@ -111,47 +111,47 @@ public class TrackerConfigurationTest extends TestCase {
 	}
 
 	public void testTimeTrigger() throws Exception {
-		JSONObject o = new JSONObject("{\"type\" : \"time\", \"minutesPast\" : 4, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\"}}");
+		JSONObject o = new JSONObject("{\"type\" : \"time\", \"minutesPast\" : 4, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\", \"volume\" : 0.5}}");
 		Trigger t = mTrackerConfiguration.buildTrigger(o);
 
 		assertNotNull(t);
-		assertEquals(new TimeTrigger(4, new PlayAudioAction("tunes.wav")), t);
+		assertEquals(new TimeTrigger(4, new PlayAudioAction("tunes.wav", 0.5f)), t);
 	}
 
 	public void testLocationTrigger() throws Exception {
-		JSONObject o = new JSONObject("{\"type\" : \"location\", \"location\" : {\"type\" : \"estimote\",\"beacon\" : \"CC:4A:11:09:A2:C3\"}, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\"}}");
+		JSONObject o = new JSONObject("{\"type\" : \"location\", \"location\" : {\"type\" : \"estimote\",\"beacon\" : \"CC:4A:11:09:A2:C3\"}, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\", \"volume\" : 0.5}}");
 		Trigger t = mTrackerConfiguration.buildTrigger(o);
 
 		assertNotNull(t);
-		assertEquals(new LocationTrigger(new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3"), new PlayAudioAction("tunes.wav")), t);
+		assertEquals(new LocationTrigger(new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3"), new PlayAudioAction("tunes.wav", 0.5f)), t);
 	}
 
 	public void testDelayedTrigger() throws Exception {
-		JSONObject o = new JSONObject("{\"type\" : \"delayed\", \"seconds\" : 5, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\"}}");
+		JSONObject o = new JSONObject("{\"type\" : \"delayed\", \"seconds\" : 5, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\", \"volume\" : 0.5}}");
 		Trigger t = mTrackerConfiguration.buildTrigger(o);
 
 		assertNotNull(t);
-		assertEquals(new DelayedTrigger(5, new PlayAudioAction("tunes.wav")), t);
+		assertEquals(new DelayedTrigger(5, new PlayAudioAction("tunes.wav", 0.5f)), t);
 	}
 
 	public void testChainTrigger() throws Exception {
-		JSONObject o = new JSONObject("{\"type\" : \"chain\", \"action\" : null, \"children\" : [{\"type\" : \"delayed\", \"seconds\" : 5, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\"}}]}");
+		JSONObject o = new JSONObject("{\"type\" : \"chain\", \"action\" : null, \"children\" : [{\"type\" : \"delayed\", \"seconds\" : 5, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\", \"volume\" : 0.5}}]}");
 		Trigger t = mTrackerConfiguration.buildTrigger(o);
 
 		assertNotNull(t);
 		ChainTrigger lhs = new ChainTrigger(null);
-		lhs.addTrigger(new DelayedTrigger(5, new PlayAudioAction("tunes.wav")));
+		lhs.addTrigger(new DelayedTrigger(5, new PlayAudioAction("tunes.wav", 0.5f)));
 		assertEquals(lhs, t);
 	}
 
 	public void testBranchTrigger() throws Exception {
-		JSONObject o = new JSONObject("{\"type\" : \"branch\", \"left\" : {\"type\" : \"delayed\", \"seconds\" : 4, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"left.wav\"}}, \"right\" : {\"type\" : \"delayed\", \"seconds\" : 5, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"right.wav\"}} \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\"}}");
+		JSONObject o = new JSONObject("{\"type\" : \"branch\", \"left\" : {\"type\" : \"delayed\", \"seconds\" : 4, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"left.wav\", \"volume\" : 0.5}}, \"right\" : {\"type\" : \"delayed\", \"seconds\" : 5, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"right.wav\", \"volume\" : 0.5}}, \"action\" : {\"type\" : \"audio\", \"audioFile\" : \"tunes.wav\", \"volume\" : 0.5}}");
 		Trigger t = mTrackerConfiguration.buildTrigger(o);
 
 		assertNotNull(t);
-		DelayedTrigger left = new DelayedTrigger(4, new PlayAudioAction("left.wav"));
-		DelayedTrigger right = new DelayedTrigger(5, new PlayAudioAction("right.wav"));
-		assertEquals(new BranchTrigger(left, right, new PlayAudioAction("tunes.wav")), t);
+		DelayedTrigger left = new DelayedTrigger(4, new PlayAudioAction("left.wav", 0.5f));
+		DelayedTrigger right = new DelayedTrigger(5, new PlayAudioAction("right.wav", 0.5f));
+		assertEquals(new BranchTrigger(left, right, new PlayAudioAction("tunes.wav", 0.5f)), t);
 	}
 
 	public void testUnknownTrigger() {

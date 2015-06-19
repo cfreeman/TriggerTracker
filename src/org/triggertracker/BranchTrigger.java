@@ -71,7 +71,7 @@ public class BranchTrigger implements Trigger {
 		}
 
 		BranchTrigger rhs = (BranchTrigger) o;
-		boolean result = false;
+		boolean result = true;
 
 		if (mAction == null) {
 			if (rhs.mAction != null) {

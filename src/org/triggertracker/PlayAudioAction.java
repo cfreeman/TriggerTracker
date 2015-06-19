@@ -28,8 +28,9 @@ public class PlayAudioAction implements Action {
 	 *
 	 * @param audioFile The path to the audio file on the external file storage that you want this action to play.
 	 */
-	public PlayAudioAction(String audioFile) {
+	public PlayAudioAction(String audioFile, float volume) {
 		mAudioToTrigger = audioFile;
+		mMaxVolume = volume;
 	}
 
 	@Override
@@ -40,6 +41,7 @@ public class PlayAudioAction implements Action {
         try {
             mp.setDataSource(Environment.getExternalStorageDirectory() + mAudioToTrigger);
             mp.prepare();
+            mp.setVolume(mMaxVolume, mMaxVolume);
             mp.start();
 
         } catch (Exception e) {
@@ -63,8 +65,10 @@ public class PlayAudioAction implements Action {
 		}
 
 		PlayAudioAction rhs = (PlayAudioAction) o;
-		return mAudioToTrigger.equals(rhs.mAudioToTrigger);
+		boolean result = (Math.abs(mMaxVolume - rhs.mMaxVolume) < 0.001);
+		return result && mAudioToTrigger.equals(rhs.mAudioToTrigger);
 	}
 
 	private String mAudioToTrigger;
+	private float mMaxVolume;
 }

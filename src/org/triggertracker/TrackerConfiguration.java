@@ -73,11 +73,13 @@ public class TrackerConfiguration {
 									  aObject.getString("number"));
 
 		} else if (type.equals("audio")) {
-			return new PlayAudioAction(aObject.getString("audioFile"));
+			return new PlayAudioAction(aObject.getString("audioFile"),
+									   (float) aObject.getDouble("volume"));
 
 		} else if (type.equals("dynamic-audio")) {
 			return new PlayDynamicAudioAction(aObject.getString("audioFile"),
 											  aObject.getBoolean("looping"),
+											  (float) aObject.getDouble("volume"),
 											  buildLocation(aObject.getJSONObject("fader")));
 
 		} else if (type.equals("video")) {
