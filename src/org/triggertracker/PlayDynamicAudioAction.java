@@ -65,8 +65,8 @@ public class PlayDynamicAudioAction implements Action {
             targetVolume = 0.0f;
         }
 
-        if (targetVolume > 1.0f) {
-            targetVolume = 1.0f;
+        if (targetVolume > mMaxVolume) {
+            targetVolume = mMaxVolume;
         }
 
         float deltaV = (targetVolume - mCurrentVolume) / INTERPOLATE_STEPS;
