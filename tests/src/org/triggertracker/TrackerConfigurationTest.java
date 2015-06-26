@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import org.triggertracker.locationservices.EstimoteCluster;
 import org.triggertracker.locationservices.EstimoteLocation;
 import org.triggertracker.locationservices.EstimoteManager;
 import org.triggertracker.locationservices.GPSLocation;
@@ -46,6 +47,18 @@ public class TrackerConfigurationTest extends TestCase {
 
 		assertNotNull(l);
 		assertEquals(new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3"), l);
+	}
+
+	public void testEstimoteCluster() throws Exception {
+		JSONObject o = new JSONObject("{\"type\" : \"estimote-cluster\", \"beacons\" : [\"CC:4A:11:09:A2:C3\", \"CA:4A:11:09:A2:C3\"]}");
+		TriggerLocation l = mTrackerConfiguration.buildLocation(o);
+
+		assertNotNull(l);
+		EstimoteCluster lhs = new EstimoteCluster(mTriggerService.getEstimoteManager());
+		lhs.addAddress("CC:4A:11:09:A2:C3");
+		lhs.addAddress("CA:4A:11:09:A2:C3");
+
+		assertEquals(lhs, l);
 	}
 
 	public void testGPSLocation() throws Exception {

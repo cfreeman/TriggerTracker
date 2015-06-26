@@ -96,7 +96,8 @@ A location will trigger will wait till the mobile device has reached a specified
 		"location" : {
 			"type" : "gps",
 			"latitude" : -16.077282, 
-			"longitude" : 145.470823}, 
+			"longitude" : 145.470823
+	},
 		"action" : {
 			"type" : "audio",
 			"audioFile" : "tunes.wav", 
@@ -107,18 +108,33 @@ A location will trigger will wait till the mobile device has reached a specified
 **Example config snippet (Estimote/iBeacon):**
 
 	{
-		"type" : "location", 
+		"type" : "location",
 		"location" : {
 			"type" : "estimote",
 			"beacon" : "CC:4A:11:09:A2:C3"
 		}, 
 		"action" : {
 			"type" : "audio",
-			"audioFile" : "tunes.wav", 
+			"audioFile" : "tunes.wav",
 			"volume" : 0.5
 		}
 	}
 
+A location can also be a cluster of estimotes. With the nearest estimote being the 'dominate' fix for location.
+
+	{
+		"type" : "location",
+		"location" : {
+			"type" : "estimote-cluster",
+			"beacons" : ["CC:4A:11:09:A2:C3",
+						 "CA:4A:11:09:A2:C3"]
+		},
+		"action" : {
+			"type" : "audio",
+			"audioFile" : "tunes.wav",
+			"volume" : 0.5
+		}
+	}
 
 #### chain
 

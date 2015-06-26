@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import org.triggertracker.locationservices.EstimoteCluster;
 import org.triggertracker.locationservices.EstimoteLocation;
 import org.triggertracker.locationservices.EstimoteManager;
 import org.triggertracker.locationservices.GPSLocation;
@@ -50,6 +51,15 @@ public class TrackerConfiguration {
 
 		if (type.equals("estimote")) {
 			return new EstimoteLocation(mEstimoteManager, lObject.getString("beacon"));
+		} else if (type.equals("estimote-cluster")) {
+			EstimoteCluster res = new EstimoteCluster(mEstimoteManager);
+
+			JSONArray estimotes = lObject.getJSONArray("beacons");
+			for (int i = 0; i < estimotes.length(); i++) {
+				res.addAddress(estimotes.getJSONObject(i).toString());
+			}
+
+			return res;
 
 		} else if (type.equals("gps")) {
 			return new GPSLocation(mGPSManager,
