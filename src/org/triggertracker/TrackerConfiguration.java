@@ -56,7 +56,7 @@ public class TrackerConfiguration {
 
 			JSONArray estimotes = lObject.getJSONArray("beacons");
 			for (int i = 0; i < estimotes.length(); i++) {
-				res.addAddress(estimotes.getJSONObject(i).toString());
+				res.addAddress(estimotes.getString(i));
 			}
 
 			return res;
