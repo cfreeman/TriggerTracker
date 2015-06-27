@@ -83,5 +83,5 @@ public class EstimoteCluster implements TriggerLocation {
 
 	private EstimoteManager em;
 	private ArrayList<String> mAddressCluster;
-	private static final double RADIUS = 1.5;
+	private static final double RADIUS = 3.5;
 }
