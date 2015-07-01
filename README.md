@@ -215,23 +215,6 @@ Branch triggers allow you to specify two exclusive triggers, only one of which w
 
 Actions are things that the application can do when a trigger is activated. These actions include:
 
-#### call-back
-
-The callback action uses twillio to trigger a phone call to any phone number. A recorded message is played down the phone.
-
-**Parameters:**
-
-* *callback* - The twillio identifier of the recorded message you wish to playback down the phone.
-* *number* - The phone number to play the recorded message too.
-
-**Example config snippet:**
-
-	{
-		"type" : "call-back",
-		"callback" : "foo", 
-		"number" : "555-notanumber"
-	}
-
 #### audio
 
 The audio action plays an audio file (located in the root directory of the devices internal storage).
@@ -324,5 +307,7 @@ NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPO
 NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
 DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Sponsors
 
 Special thanks to [The Edge](http://edgeqld.org.au/), Daniel Flood and [Sandra Carluccio](http://sandracarluccio.net/), who have all supported the development of TriggerTracker.

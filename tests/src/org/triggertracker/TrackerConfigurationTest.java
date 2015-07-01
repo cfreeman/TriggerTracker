@@ -78,15 +78,6 @@ public class TrackerConfigurationTest extends TestCase {
 		}
 	}
 
-	// Build action tests.
-	public void testCallBackAction() throws Exception {
-		JSONObject o = new JSONObject("{\"type\" : \"call-back\",\"callback\" : \"foo\", \"number\" : \"555-balls\"}");
-		Action a = mTrackerConfiguration.buildAction(o);
-
-		assertNotNull(a);
-		assertEquals(new CallBackAction("foo", "555-balls"), a);
-	}
-
 	public void testAudioAction() throws Exception {
 		JSONObject o = new JSONObject("{\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\", \"volume\" : 0.5}");
 		Action a = mTrackerConfiguration.buildAction(o);

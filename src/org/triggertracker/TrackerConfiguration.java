@@ -78,11 +78,7 @@ public class TrackerConfiguration {
 		}
 		String type = aObject.getString("type").toLowerCase();
 
-		if (type.equals("call-back")) {
-			return new CallBackAction(aObject.getString("callback"),
-									  aObject.getString("number"));
-
-		} else if (type.equals("audio")) {
+		if (type.equals("audio")) {
 			return new PlayAudioAction(aObject.getString("audioFile"),
 									   (float) aObject.getDouble("volume"));
 
