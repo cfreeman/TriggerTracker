@@ -51,7 +51,7 @@ import org.triggertracker.locationservices.TriggerLocation;
 public class TriggerService extends Service implements LocationListener {
 	private static final String TAG = TriggerService.class.getSimpleName();
 	private static final Region ALL_ESTIMOTE_BEACONS_REGION = new Region("rid", null, null, null);
-	private static final int POLL_INTERVAL = 500;
+	private static final int POLL_INTERVAL = 600;
 
 	private LocationManager mLocationManager;
 	private GPSManager mGPSManager;
@@ -80,7 +80,7 @@ public class TriggerService extends Service implements LocationListener {
 			@Override
 			public void onServiceReady() {
 				try {
-					mBeaconManager.setForegroundScanPeriod(POLL_INTERVAL, POLL_INTERVAL * 5);
+					mBeaconManager.setForegroundScanPeriod(POLL_INTERVAL, POLL_INTERVAL);
 					mBeaconManager.startRanging(ALL_ESTIMOTE_BEACONS_REGION);
 				} catch (RemoteException e) {
 					Log.e(TAG, "Cannot start ranging", e);
