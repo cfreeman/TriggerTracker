@@ -24,9 +24,10 @@ import java.util.ArrayList;
 
 public class EstimoteCluster implements TriggerLocation {
 
-	public EstimoteCluster(EstimoteManager estimoteManager) {
+	public EstimoteCluster(EstimoteManager estimoteManager, double range) {
 		em = estimoteManager;
 		mAddressCluster = new ArrayList<String>();
+		mradius = range;
 	}
 
 	public void addAddress(String beaconAddress) {		
@@ -34,7 +35,7 @@ public class EstimoteCluster implements TriggerLocation {
 	}
 
 	public boolean at() {
-		return (distance() < RADIUS);
+		return (distance() < mradius);
 	}
 
 	public float distance() {
@@ -52,7 +53,7 @@ public class EstimoteCluster implements TriggerLocation {
 
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof EstimoteLocation)) {
+		if (!(o instanceof EstimoteCluster)) {
 			return false;
 		}
 
@@ -70,18 +71,19 @@ public class EstimoteCluster implements TriggerLocation {
 			result = result && em.equals(rhs.em);
 		}
 
-		if (mAddressCluster != null) {
+		if (mAddressCluster == null) {
 			if (rhs.mAddressCluster != null) {
 				return false;
 			}
 
+		} else {
 			result = result && mAddressCluster.equals(rhs.mAddressCluster);
 		}
 
-		return result && (Math.abs(RADIUS - rhs.RADIUS) < 0.001) ;
+		return result && (Math.abs(mradius - rhs.mradius) < 0.001);
 	}
 
 	private EstimoteManager em;
 	private ArrayList<String> mAddressCluster;
-	private static final double RADIUS = 3.5;
+	private double mradius;
 }

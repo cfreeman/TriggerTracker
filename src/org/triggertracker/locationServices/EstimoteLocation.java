@@ -20,13 +20,14 @@ package org.triggertracker.locationservices;
 
 public class EstimoteLocation implements TriggerLocation {
 
-	public EstimoteLocation(EstimoteManager estimoteManager, String beaconAddress) {
+	public EstimoteLocation(EstimoteManager estimoteManager, String beaconAddress, double range) {
 		em = estimoteManager;
 		address = beaconAddress;
+		radius = range;
 	}
 
 	public boolean at() {
-		return (em.getLastKnownDistance(address) < RADIUS);
+		return (em.getLastKnownDistance(address) < radius);
 	}
 
 	public float distance() {
@@ -53,10 +54,10 @@ public class EstimoteLocation implements TriggerLocation {
 			result = result && address.equals(rhs.address);
 		}
 
-		return result && (Math.abs(RADIUS - rhs.RADIUS) < 0.001) ;
+		return result && (Math.abs(radius - rhs.radius) < 0.001) ;
 	}
 
 	private EstimoteManager em;
 	private String address;
-	private static final double RADIUS = 1.5;
+	private double radius;
 }

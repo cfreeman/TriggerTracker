@@ -50,9 +50,9 @@ public class TrackerConfiguration {
 		String type = lObject.getString("type").toLowerCase();
 
 		if (type.equals("estimote")) {
-			return new EstimoteLocation(mEstimoteManager, lObject.getString("beacon"));
+			return new EstimoteLocation(mEstimoteManager, lObject.getString("beacon"), lObject.getDouble("range"));
 		} else if (type.equals("estimote-cluster")) {
-			EstimoteCluster res = new EstimoteCluster(mEstimoteManager);
+			EstimoteCluster res = new EstimoteCluster(mEstimoteManager, lObject.getDouble("range"));
 
 			JSONArray estimotes = lObject.getJSONArray("beacons");
 			for (int i = 0; i < estimotes.length(); i++) {

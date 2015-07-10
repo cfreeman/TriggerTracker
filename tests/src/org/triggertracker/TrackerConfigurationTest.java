@@ -42,19 +42,19 @@ public class TrackerConfigurationTest extends TestCase {
 
 	// Build location tests.
 	public void testEstimoteLocation() throws Exception {
-		JSONObject o = new JSONObject("{\"type\" : \"estimote\",\"beacon\" : \"CC:4A:11:09:A2:C3\"}");
+		JSONObject o = new JSONObject("{\"type\" : \"estimote\",\"beacon\" : \"CC:4A:11:09:A2:C3\", \"range\" : 3.5}");
 		TriggerLocation l = mTrackerConfiguration.buildLocation(o);
 
 		assertNotNull(l);
-		assertEquals(new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3"), l);
+		assertEquals(new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3", 3.5), l);
 	}
 
 	public void testEstimoteCluster() throws Exception {
-		JSONObject o = new JSONObject("{\"type\" : \"estimote-cluster\", \"beacons\" : [\"CC:4A:11:09:A2:C3\", \"CA:4A:11:09:A2:C3\"]}");
+		JSONObject o = new JSONObject("{\"type\" : \"estimote-cluster\", \"range\" : 3.5, \"beacons\" : [\"CC:4A:11:09:A2:C3\", \"CA:4A:11:09:A2:C3\"]}");
 		TriggerLocation l = mTrackerConfiguration.buildLocation(o);
 
 		assertNotNull(l);
-		EstimoteCluster lhs = new EstimoteCluster(mTriggerService.getEstimoteManager());
+		EstimoteCluster lhs = new EstimoteCluster(mTriggerService.getEstimoteManager(), 3.5);
 		lhs.addAddress("CC:4A:11:09:A2:C3");
 		lhs.addAddress("CA:4A:11:09:A2:C3");
 
@@ -87,11 +87,11 @@ public class TrackerConfigurationTest extends TestCase {
 	}
 
 	public void testDynamicAudioAction() throws Exception {
-		JSONObject o = new JSONObject("{\"type\" : \"dynamic-audio\", \"audioFile\" : \"/station1.mp3\", \"looping\" : true, \"volume\" : 0.5, \"fader\" : { \"type\" : \"estimote\", \"beacon\" : \"CC:4A:11:09:A2:C3\"}}");
+		JSONObject o = new JSONObject("{\"type\" : \"dynamic-audio\", \"audioFile\" : \"/station1.mp3\", \"looping\" : true, \"volume\" : 0.5, \"fader\" : { \"type\" : \"estimote\", \"beacon\" : \"CC:4A:11:09:A2:C3\", \"range\" : 3.5}}");
 		Action a = mTrackerConfiguration.buildAction(o);
 
 		assertNotNull(a);
-		assertEquals(new PlayDynamicAudioAction("/station1.mp3", true, 0.5f, new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3")), a);
+		assertEquals(new PlayDynamicAudioAction("/station1.mp3", true, 0.5f, new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3", 3.5)), a);
 	}
 
 	public void testVideoAction() {
@@ -123,11 +123,11 @@ public class TrackerConfigurationTest extends TestCase {
 	}
 
 	public void testLocationTrigger() throws Exception {
-		JSONObject o = new JSONObject("{\"type\" : \"location\", \"location\" : {\"type\" : \"estimote\",\"beacon\" : \"CC:4A:11:09:A2:C3\"}, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\", \"volume\" : 0.5}}");
+		JSONObject o = new JSONObject("{\"type\" : \"location\", \"location\" : {\"type\" : \"estimote\",\"beacon\" : \"CC:4A:11:09:A2:C3\", \"range\" : 3.5}, \"action\" : {\"type\" : \"audio\",\"audioFile\" : \"tunes.wav\", \"volume\" : 0.5}}");
 		Trigger t = mTrackerConfiguration.buildTrigger(o);
 
 		assertNotNull(t);
-		assertEquals(new LocationTrigger(new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3"), new PlayAudioAction("tunes.wav", 0.5f)), t);
+		assertEquals(new LocationTrigger(new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3", 3.5), new PlayAudioAction("tunes.wav", 0.5f)), t);
 	}
 
 	public void testDelayedTrigger() throws Exception {
