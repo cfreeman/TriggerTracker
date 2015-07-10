@@ -21,6 +21,7 @@ package org.triggertracker;
 import java.util.ArrayList;
 
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -75,6 +76,11 @@ public class TriggerService extends Service implements LocationListener {
 		final Context text = this;
 
 		// Enable the low power bluetooth locatiion service.
+		BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		if (!mBluetoothAdapter.isEnabled()) {
+			mBluetoothAdapter.enable();
+		}
+
 		mBeaconManager = new BeaconManager(this);
 		mBeaconManager.connect(new BeaconManager.ServiceReadyCallback() {
 			@Override
