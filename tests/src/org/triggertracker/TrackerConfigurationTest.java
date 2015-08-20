@@ -18,6 +18,8 @@
  */
 package org.triggertracker;
 
+import android.content.Context;
+
 import junit.framework.TestCase;
 
 import org.json.JSONArray;
@@ -37,7 +39,10 @@ public class TrackerConfigurationTest extends TestCase {
 
 	protected void setUp() {
 		mTriggerService = new TriggerService();
-		mTrackerConfiguration = new TrackerConfiguration(mTriggerService.getEstimoteManager(), mTriggerService.getGPSManager());
+		mTrackerConfiguration = new TrackerConfiguration(mTriggerService.getEstimoteManager(),
+														 mTriggerService.getGPSManager(),
+														 mTriggerService.getApplication(),
+														 mTriggerService.getApplicationContext());
 	}
 
 	// Build location tests.
@@ -98,7 +103,9 @@ public class TrackerConfigurationTest extends TestCase {
 		try {
 			JSONObject o = new JSONObject("{\"type\" : \"video\",\"videoFile\" : \"anime.avi\"}");
 			Action a = mTrackerConfiguration.buildAction(o);
-			fail(); //We expect an exception to be thrown by the above.
+
+			assertNotNull(a);
+			assertEquals(new PlayVideoAction(mTriggerService.getApplication(), mTriggerService.getApplicationContext(), "anime.avi"));
 
 		} catch (Exception e) {
 		}

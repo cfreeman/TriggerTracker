@@ -101,7 +101,7 @@ public class TriggerService extends Service implements LocationListener {
 
 		mGPSManager = new GPSManager(mLocationManager);
 
-		final TrackerConfiguration config = new TrackerConfiguration(mEstimoteManager, mGPSManager);
+		final TrackerConfiguration config = new TrackerConfiguration(mEstimoteManager, mGPSManager, getApplication(), getBaseContext());
 		final String configFile = Environment.getExternalStorageDirectory() + "/config.json";
 
 		try {

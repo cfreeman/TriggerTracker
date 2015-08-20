@@ -43,6 +43,46 @@ public class PlayVideoAction implements Action {
 		return;	// Nothing needs updating in this action.
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof PlayVideoAction)) {
+			return false;
+		}
+
+		if (o == this) {
+			return true;
+		}
+
+
+		PlayVideoAction rhs = (PlayVideoAction) o;
+		boolean result = true;
+		if (videoToTrigger == null) {
+			if (rhs.videoToTrigger != null) {
+				return false;
+			}
+		} else {
+			result = result && videoToTrigger.equals(rhs.videoToTrigger);
+		}
+
+		if (parentApplication == null) {
+			if (rhs.parentApplication != null) {
+				return false;
+			}
+		} else {
+			result = result && parentApplication.equals(rhs.parentApplication);
+		}
+
+		if (parentContext == null) {
+			if (rhs.parentContext != null) {
+				return false;
+			}
+		} else {
+			result = result && parentContext.equals(rhs.parentContext);
+		}
+
+		return result;
+	}
+
 	private Application parentApplication;
 	private Context parentContext;
 	private String videoToTrigger;

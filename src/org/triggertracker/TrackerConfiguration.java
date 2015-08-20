@@ -18,6 +18,9 @@
  */
 package org.triggertracker;
 
+import android.app.Application;
+import android.content.Context;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,10 +43,14 @@ public class TrackerConfiguration {
 
 	private final EstimoteManager mEstimoteManager;
 	private final GPSManager mGPSManager;
+	private final Application mApplication;
+	private final Context mContext;
 
-	public TrackerConfiguration(EstimoteManager eManager, GPSManager gManager) {
+	public TrackerConfiguration(EstimoteManager eManager, GPSManager gManager, Application application, Context context) {
 		mEstimoteManager = eManager;
 		mGPSManager = gManager;
+		mApplication = application;
+		mContext = context;
 	};
 
 	public TriggerLocation buildLocation(JSONObject lObject) throws Exception {
@@ -89,8 +96,9 @@ public class TrackerConfiguration {
 											  buildLocation(aObject.getJSONObject("fader")));
 
 		} else if (type.equals("video")) {
-			throw new Exception("video file not implemented yet");
-
+			return new PlayVideoAction(mApplication,
+									   mContext,
+									   aObject.getString("videoFile"));
 		} else {
 			throw new Exception("Unknown action type: " + type);
 
