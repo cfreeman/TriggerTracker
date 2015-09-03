@@ -99,16 +99,12 @@ public class TrackerConfigurationTest extends TestCase {
 		assertEquals(new PlayDynamicAudioAction("/station1.mp3", true, 0.5f, new EstimoteLocation(mTriggerService.getEstimoteManager(), "CC:4A:11:09:A2:C3", 3.5)), a);
 	}
 
-	public void testVideoAction() {
-		try {
-			JSONObject o = new JSONObject("{\"type\" : \"video\",\"videoFile\" : \"anime.avi\"}");
-			Action a = mTrackerConfiguration.buildAction(o);
+	public void testVideoAction() throws Exception {
+		JSONObject o = new JSONObject("{\"type\" : \"video\",\"videoFile\" : \"anime.avi\"}");
+		Action a = mTrackerConfiguration.buildAction(o);
 
-			assertNotNull(a);
-			assertEquals(new PlayVideoAction(mTriggerService.getApplication(), mTriggerService.getApplicationContext(), "anime.avi"));
-
-		} catch (Exception e) {
-		}
+		assertNotNull(a);
+		assertEquals(new PlayVideoAction(mTriggerService.getApplication(), mTriggerService.getApplicationContext(), "anime.avi"), a);
 	}
 
 	public void testUnknownAction() {

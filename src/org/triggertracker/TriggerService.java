@@ -116,7 +116,11 @@ public class TriggerService extends Service implements LocationListener {
 				mPlayer.start();
 			}
 		} catch (Exception e) {
-			System.err.println("Unable to set background sound track - " + e);
+			CharSequence txt = "Unable to load background soundtrack from config file";
+			int duration = Toast.LENGTH_LONG;
+
+			Toast toast = Toast.makeText(getApplicationContext(), txt, duration);
+			toast.show();
 		}
 
 		new Thread(new Runnable() {
@@ -125,9 +129,12 @@ public class TriggerService extends Service implements LocationListener {
 				ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 				try {
 					triggers = config.loadTriggersFromJSON(configFile);
-					//triggers.add(config.loadFromYaml(Environment.getExternalStorageDirectory() + "/config.json"));
 				} catch (Exception e) {
-					System.err.println("Unable to parse configuration file - " + e);
+					CharSequence txt = "Bad configuration file. Unable to open it";
+					int duration = Toast.LENGTH_LONG;
+
+					Toast toast = Toast.makeText(getApplicationContext(), txt, duration);
+					toast.show();
 				}
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
